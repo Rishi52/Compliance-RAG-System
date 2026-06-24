@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+venv/
+env/
+.env
+.venv/
+
+# IDE / OS
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+
+# ChromaDB vector store (generated at runtime)
+chroma_db/
+
+# Raw & processed data (may contain sensitive/copyrighted PDFs)
+data/raw/
+data/processed/
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Environment variables
+.env
