@@ -1,91 +1,229 @@
-import pdfplumber
-import re
 import json
+import re
+from pathlib import Path
+from typing import Any
 
-PDF_PATH = "data\\raw\\CIS_Controls_Guide_v8.1.2_0325_v2.pdf"
-OUTPUT_PATH = "data\\processed\\cis_safeguards.json"
+import pdfplumber
 
-CONTROL_START_PAGE = 20
-CONTROL_END_PAGE = 95
+from config.settings import settings
 
-records = []
 
-current_control_id = None
-current_control_name = None
-
-control_pattern = re.compile(r"CONTROL\s+(\d+)")
-safeguard_pattern = re.compile(
-    r"Safeguard\s+(\d+\.\d+):\s*(.+)"
+CONTROL_PATTERN = re.compile(
+    r"^\s*CONTROL\s+(\d+)\s*$",
+    re.IGNORECASE,
 )
 
-with pdfplumber.open(PDF_PATH) as pdf:
+SAFEGUARD_PATTERN = re.compile(
+    r"^\s*Safeguard\s+(\d+\.\d+):\s*(.+?)\s*$",
+    re.IGNORECASE,
+)
 
-    for page_num, page in enumerate(
-            pdf.pages[CONTROL_START_PAGE - 1 : CONTROL_END_PAGE],
-            start=CONTROL_START_PAGE):
 
-        text = page.extract_text()
+def normalize_line(line: str) -> str:
+    """Remove repeated whitespace from an extracted PDF line."""
 
-        if not text:
-            continue
+    return " ".join(line.split()).strip()
 
-        # Detect Control
-        lines = text.split("\n")
 
-        for i, line in enumerate(lines):
+def extract_safeguards(
+    pdf_path: Path,
+    start_page: int,
+    end_page: int,
+) -> list[dict[str, Any]]:
+    """Extract CIS safeguards while preserving their source metadata."""
 
-            control_match = control_pattern.search(line)
-
-            if control_match:
-
-                current_control_id = control_match.group(1)
-
-                if i + 1 < len(lines):
-                    current_control_name = lines[i + 1].strip()
-
-        # Detect Safeguards
-        matches = list(
-            safeguard_pattern.finditer(text)
+    if not pdf_path.exists():
+        raise FileNotFoundError(
+            f"CIS PDF was not found at: {pdf_path}"
         )
 
-        for idx, match in enumerate(matches):
+    records: list[dict[str, Any]] = []
 
-            safeguard_id = match.group(1)
-            safeguard_name = match.group(2)
+    current_control_id: str | None = None
+    current_control_name: str | None = None
+    current_record: dict[str, Any] | None = None
+    content_lines: list[str] = []
+    expecting_control_name = False
 
-            start = match.end()
+    def save_current_record() -> None:
+        nonlocal current_record, content_lines
 
-            if idx < len(matches) - 1:
-                end = matches[idx + 1].start()
-            else:
-                end = len(text)
+        if current_record is None:
+            return
 
-            content = text[start:end].strip()
+        content = "\n".join(content_lines).strip()
 
-            records.append(
-                {
-                    "page": page_num,
-                    "control_id": current_control_id,
-                    "control_name": current_control_name,
-                    "safeguard_id": safeguard_id,
-                    "safeguard_name": safeguard_name,
-                    "content": content
-                }
+        if content:
+            current_record["content"] = content
+            records.append(current_record)
+
+        current_record = None
+        content_lines = []
+
+    with pdfplumber.open(pdf_path) as pdf:
+        total_pages = len(pdf.pages)
+
+        if start_page < 1 or end_page > total_pages:
+            raise ValueError(
+                "Invalid extraction range: "
+                f"{start_page}-{end_page}. "
+                f"The PDF contains {total_pages} pages."
             )
 
-unique_records = {}
+        selected_pages = pdf.pages[start_page - 1 : end_page]
 
-for record in records:
-    unique_records[record["safeguard_id"]] = record
+        for page_number, page in enumerate(
+            selected_pages,
+            start=start_page,
+        ):
+            page_text = page.extract_text()
 
-records = list(unique_records.values())
+            if not page_text:
+                continue
 
-with open(
-    OUTPUT_PATH,
-    "w",
-    encoding="utf-8"
-) as f:
-    json.dump(records, f, indent=4)
+            for raw_line in page_text.splitlines():
+                line = normalize_line(raw_line)
 
-print(f"Extracted {len(records)} safeguards")
-print(f"Saved to {OUTPUT_PATH}")
+                if not line:
+                    continue
+
+                control_match = CONTROL_PATTERN.match(line)
+
+                if control_match:
+                    save_current_record()
+
+                    current_control_id = control_match.group(1)
+                    current_control_name = None
+                    expecting_control_name = True
+                    continue
+
+                if expecting_control_name:
+                    current_control_name = line
+                    expecting_control_name = False
+                    continue
+
+                safeguard_match = SAFEGUARD_PATTERN.match(line)
+
+                if safeguard_match:
+                    save_current_record()
+
+                    safeguard_id = safeguard_match.group(1)
+                    safeguard_name = safeguard_match.group(2)
+                    safeguard_control_id = safeguard_id.split(".")[0]
+
+                    # The safeguard ID is the most reliable source
+                    # for its parent control.
+                    if current_control_id != safeguard_control_id:
+                        current_control_id = safeguard_control_id
+
+                    current_record = {
+                        "page": page_number,
+                        "control_id": current_control_id,
+                        "control_name": current_control_name,
+                        "safeguard_id": safeguard_id,
+                        "safeguard_name": safeguard_name,
+                    }
+
+                    content_lines = []
+                    continue
+
+                if current_record is not None:
+                    content_lines.append(line)
+
+    save_current_record()
+
+    return remove_duplicate_safeguards(records)
+
+
+def remove_duplicate_safeguards(
+    records: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Keep the first occurrence of each CIS safeguard."""
+
+    unique_records: dict[str, dict[str, Any]] = {}
+
+    for record in records:
+        safeguard_id = record["safeguard_id"]
+
+        if safeguard_id not in unique_records:
+            unique_records[safeguard_id] = record
+
+    return list(unique_records.values())
+
+
+def validate_records(records: list[dict[str, Any]]) -> None:
+    """Validate required metadata and safeguard uniqueness."""
+
+    if not records:
+        raise ValueError("No safeguards were extracted from the PDF.")
+
+    required_fields = {
+        "page",
+        "control_id",
+        "control_name",
+        "safeguard_id",
+        "safeguard_name",
+        "content",
+    }
+
+    seen_ids: set[str] = set()
+
+    for record in records:
+        missing_fields = required_fields - record.keys()
+
+        if missing_fields:
+            raise ValueError(
+                f"Safeguard record is missing fields: {missing_fields}"
+            )
+
+        safeguard_id = record["safeguard_id"]
+
+        if safeguard_id in seen_ids:
+            raise ValueError(
+                f"Duplicate safeguard detected: {safeguard_id}"
+            )
+
+        if not record["content"].strip():
+            raise ValueError(
+                f"Safeguard {safeguard_id} has empty content."
+            )
+
+        seen_ids.add(safeguard_id)
+
+
+def save_records(
+    records: list[dict[str, Any]],
+    output_path: Path,
+) -> None:
+    """Write extracted safeguard records to JSON."""
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    output_path.write_text(
+        json.dumps(records, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+def main() -> None:
+    records = extract_safeguards(
+        pdf_path=settings.cis_pdf_path,
+        start_page=settings.control_start_page,
+        end_page=settings.control_end_page,
+    )
+
+    validate_records(records)
+    save_records(records, settings.safeguards_path)
+
+    print(f"Source PDF: {settings.cis_pdf_path}")
+    print(
+        "Pages processed: "
+        f"{settings.control_start_page}-"
+        f"{settings.control_end_page}"
+    )
+    print(f"Unique safeguards extracted: {len(records)}")
+    print(f"Saved to: {settings.safeguards_path}")
+
+
+if __name__ == "__main__":
+    main()

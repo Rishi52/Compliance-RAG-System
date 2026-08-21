@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     cis_pdf_filename: str = "CIS_Controls_Guide_v8.1.2_0325_v2.pdf"
     safeguards_filename: str = "cis_safeguards.json"
     chunked_safeguards_filename: str = "chunked_safeguards.json"
+ 
+    # CIS document extraction range
+    control_start_page: int = 20
+    control_end_page: int = 95
 
     # Retrieval models
     embedding_model: str = "BAAI/bge-small-en-v1.5"
