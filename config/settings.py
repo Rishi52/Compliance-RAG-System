@@ -10,7 +10,12 @@ class Settings(BaseSettings):
     """Central configuration for the Compliance RAG application."""
 
     app_name: str = "Compliance RAG"
-
+    app_version: str = "0.2.0"
+    max_question_length: int = 2000
+    cors_origins: str = (
+        "http://127.0.0.1:5500,"
+        "http://localhost:5500"
+    )
     # Data files
     cis_pdf_filename: str = "CIS_Controls_Guide_v8.1.2_0325_v2.pdf"
     safeguards_filename: str = "cis_safeguards.json"
@@ -86,6 +91,14 @@ class Settings(BaseSettings):
     @property
     def prompts_path(self) -> Path:
         return PROJECT_ROOT / "config" / "prompts.yaml"
+
+    @property
+    def allowed_cors_origins(self) -> list[str]:
+        return [
+            origin.strip()
+            for origin in self.cors_origins.split(",")
+            if origin.strip()
+        ]
 
 
 settings = Settings()
