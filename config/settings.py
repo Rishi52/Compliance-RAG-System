@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     control_start_page: int = 20
     control_end_page: int = 95
 
+    # Chunking configuration
+    document_id: str = "cis-controls-v8.1.2"
+    chunk_size: int = 1000
+    chunk_overlap: int = 150
+
     # Retrieval models
     embedding_model: str = "BAAI/bge-small-en-v1.5"
     reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
