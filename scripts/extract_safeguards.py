@@ -44,9 +44,12 @@ def extract_safeguards(
     current_record: dict[str, Any] | None = None
     content_lines: list[str] = []
     expecting_control_name = False
+    expecting_safeguard_name_continuation = False
 
     def save_current_record() -> None:
-        nonlocal current_record, content_lines
+        nonlocal current_record
+        nonlocal content_lines
+        nonlocal expecting_safeguard_name_continuation
 
         if current_record is None:
             return
@@ -59,6 +62,7 @@ def extract_safeguards(
 
         current_record = None
         content_lines = []
+        expecting_safeguard_name_continuation = False
 
     with pdfplumber.open(pdf_path) as pdf:
         total_pages = len(pdf.pages)
@@ -125,6 +129,28 @@ def extract_safeguards(
                     }
 
                     content_lines = []
+                    expecting_safeguard_name_continuation = True
+                    continue
+
+                if (
+                    current_record is not None
+                    and expecting_safeguard_name_continuation
+                ):
+                    compact_line = line.replace(" ", "")
+
+                    body_has_started = (
+                        compact_line == "|||"
+                        or line.startswith("Asset Type:")
+                    )
+
+                    if body_has_started:
+                        expecting_safeguard_name_continuation = False
+                        content_lines.append(line)
+                    else:
+                        current_record["safeguard_name"] = (
+                            f"{current_record['safeguard_name']} {line}"
+                        ).strip()
+
                     continue
 
                 if current_record is not None:
@@ -187,7 +213,20 @@ def validate_records(records: list[dict[str, Any]]) -> None:
             raise ValueError(
                 f"Safeguard {safeguard_id} has empty content."
             )
+        first_content_line = record["content"].splitlines()[0]
+        compact_first_line = first_content_line.replace(" ", "")
 
+        valid_body_start = (
+            compact_first_line == "|||"
+            or first_content_line.startswith("Asset Type:")
+        )
+
+        if not valid_body_start:
+            raise ValueError(
+                f"Safeguard {safeguard_id} may have an "
+                "unresolved wrapped title. First content line: "
+                f"{first_content_line!r}"
+            )
         seen_ids.add(safeguard_id)
 
 
