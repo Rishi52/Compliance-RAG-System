@@ -1,3 +1,6 @@
-from config.prompt_loader import load_prompt
+"""Convenient FastAPI application entry point."""
 
-system_prompt = load_prompt()
+from api.main import app
+
+
+__all__ = ["app"]

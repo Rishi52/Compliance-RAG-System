@@ -1,107 +1,99 @@
-import chromadb
-from sentence_transformers import SentenceTransformer
-from langchain_ollama import ChatOllama
-import time
-import os
-import sys
-sys.path.append(
-    os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            ".."
+from time import perf_counter
+
+from config.settings import settings
+from generation.context_selector import SafeguardContextSelector
+from generation.generator import ComplianceGenerator
+from retrieval.hybrid_retriever import HybridRetriever
+
+
+EXIT_COMMANDS = {"exit", "quit", "q"}
+
+
+def display_sources(sources: list[dict]) -> None:
+    """Print source information for a generated answer."""
+
+    if not sources:
+        print("\nSources: None")
+        return
+
+    print("\nSources:")
+
+    for source in sources:
+        print(
+            f"- [{source['source_id']}] "
+            f"Control {source['control_id']}, "
+            f"Safeguard {source['safeguard_id']}, "
+            f"Page {source['page']}: "
+            f"{source['safeguard_name']}"
         )
-    )
-)
-from config.prompt_loader import load_prompt
 
-SYSTEM_PROMPT = load_prompt()
-# ------------------------
-# Models
-# ------------------------
 
-embedding_model = SentenceTransformer(
-    "BAAI/bge-small-en-v1.5"
-)
+def main() -> None:
+    """Run the grounded Compliance RAG command-line chat."""
 
-llm = ChatOllama(
-    model="llama3.2:3b",
-    temperature=0
-)
+    print("Loading Compliance RAG services...")
 
-# ------------------------
-# ChromaDB
-# ------------------------
+    retriever = HybridRetriever()
+    context_selector = SafeguardContextSelector()
+    generator = ComplianceGenerator()
 
-client = chromadb.PersistentClient(
-    path="chroma_db"
-)
-
-collection = client.get_collection(
-    "cis_controls"
-)
-
-# ------------------------
-# Chat Loop
-# ------------------------
-
-while True:
-
-    query = input("\nQuestion: ")
-
-    if query.lower() == "exit":
-        break
-
-    query_embedding = embedding_model.encode(
-        query
-    ).tolist()
-
-    results = collection.query(
-        query_embeddings=[query_embedding],
-        n_results=5
+    print(
+        f"Ready. Model: {settings.ollama_model}. "
+        "Type 'exit' to stop."
     )
 
-    context = ""
+    while True:
+        try:
+            query = input("\nQuestion: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nExiting.")
+            break
 
-    for doc, meta in zip(
-        results["documents"][0],
-        results["metadatas"][0]
-    ):
+        if query.lower() in EXIT_COMMANDS:
+            print("Exiting.")
+            break
 
-        context += f"""
+        if not query:
+            print("Please enter a question.")
+            continue
 
-Control ID: {meta['control_id']}
-Control Name: {meta['control_name']}
+        started_at = perf_counter()
 
-Safeguard ID: {meta['safeguard_id']}
-Safeguard Name: {meta['safeguard_name']}
+        try:
+            ranked_documents = retriever.search(
+                query=query,
+                k=settings.final_top_k,
+            )
 
-Page: {meta['page']}
+            selected_documents = context_selector.select(
+                ranked_documents
+            )
 
-Content:
-{doc}
+            result = generator.generate(
+                query=query,
+                documents=selected_documents,
+            )
+        except Exception as error:
+            print(
+                f"\nUnable to process the question: {error}"
+            )
+            continue
 
-==================================================
-"""
+        elapsed_seconds = perf_counter() - started_at
 
-    final_prompt = f"""
-{SYSTEM_PROMPT}
+        print(f"\nAnswer:\n{result['answer']}")
+        display_sources(result["sources"])
 
-CONTEXT:
+        print(
+            f"\nCitation valid: "
+            f"{result['citation_valid']}"
+        )
+        print(
+            f"Generation attempts: "
+            f"{result['generation_attempts']}"
+        )
+        print(f"Time: {elapsed_seconds:.2f} seconds")
 
-{context}
 
-QUESTION:
-
-{query}
-"""
-
-    start = time.time()
-
-    response = llm.invoke(final_prompt)
-
-    end = time.time()
-
-    print(f"\nTime Taken: {end-start:.2f} sec")
-
-    print("\nAnswer:\n")
-    print(response.content)
+if __name__ == "__main__":
+    main()
