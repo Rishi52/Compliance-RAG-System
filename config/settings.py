@@ -30,7 +30,9 @@ class Settings(BaseSettings):
     reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
     # Generation model
-    ollama_model: str = "llama3.2:1b"
+    ollama_model: str = "llama3.2:3b"
+    generation_max_attempts: int = 2
+    generation_safeguards_k: int = 1
     ollama_temperature: float = 0.0
 
     # ChromaDB
@@ -80,6 +82,10 @@ class Settings(BaseSettings):
     @property
     def chroma_path(self) -> Path:
         return PROJECT_ROOT / self.chroma_directory_name
+    
+    @property
+    def prompts_path(self) -> Path:
+        return PROJECT_ROOT / "config" / "prompts.yaml"
 
 
 settings = Settings()
