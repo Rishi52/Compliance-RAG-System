@@ -67,7 +67,11 @@ def extract_safeguards(
     with pdfplumber.open(pdf_path) as pdf:
         total_pages = len(pdf.pages)
 
-        if start_page < 1 or end_page > total_pages:
+        if (
+            start_page < 1
+            or end_page < start_page
+            or end_page > total_pages
+        ):
             raise ValueError(
                 "Invalid extraction range: "
                 f"{start_page}-{end_page}. "

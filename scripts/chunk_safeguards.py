@@ -2,8 +2,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-
 from config.settings import settings
 
 
@@ -26,7 +24,14 @@ def load_safeguards(input_path: Path) -> list[dict[str, Any]]:
             "Run: python -m scripts.extract_safeguards"
         )
 
-    records = json.loads(input_path.read_text(encoding="utf-8"))
+    try:
+        records = json.loads(
+            input_path.read_text(encoding="utf-8")
+        )
+    except json.JSONDecodeError as error:
+        raise ValueError(
+            f"Invalid safeguard JSON at: {input_path}"
+        ) from error
 
     if not isinstance(records, list) or not records:
         raise ValueError("Safeguard input must be a non-empty JSON list.")
@@ -44,7 +49,16 @@ def load_safeguards(input_path: Path) -> list[dict[str, Any]]:
                 f"Safeguard at position {position} is missing: "
                 f"{sorted(missing_fields)}"
             )
+        content = record["content"]
 
+        if (
+            not isinstance(content, str)
+            or not content.strip()
+        ):
+            raise ValueError(
+                f"Safeguard at position {position} "
+                "has empty content."
+            )
     return records
 
 
@@ -59,6 +73,23 @@ def build_context_header(record: dict[str, Any]) -> str:
         f"{record['safeguard_name']}"
     )
 
+def create_text_splitter(
+    chunk_size: int,
+    chunk_overlap: int,
+) -> Any:
+    """Create the production recursive text splitter."""
+
+    from langchain_text_splitters import (
+        RecursiveCharacterTextSplitter,
+    )
+
+    return RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        separators=["\n\n", "\n", ". ", " ", ""],
+        length_function=len,
+        keep_separator=True,
+    )
 
 def chunk_safeguards(
     safeguards: list[dict[str, Any]],
@@ -67,6 +98,11 @@ def chunk_safeguards(
     chunk_overlap: int,
 ) -> list[dict[str, Any]]:
     """Split safeguards into deterministic, metadata-rich chunks."""
+
+    document_id = document_id.strip()
+
+    if not document_id:
+        raise ValueError("document_id cannot be empty.")
 
     if chunk_size <= 0:
         raise ValueError("chunk_size must be greater than zero.")
@@ -97,12 +133,9 @@ def chunk_safeguards(
             max(body_chunk_size - 1, 0),
         )
 
-        splitter = RecursiveCharacterTextSplitter(
+        splitter = create_text_splitter(
             chunk_size=body_chunk_size,
             chunk_overlap=effective_overlap,
-            separators=["\n\n", "\n", ". ", " ", ""],
-            length_function=len,
-            keep_separator=True,
         )
 
         body_chunks = splitter.split_text(record["content"])
@@ -132,6 +165,7 @@ def chunk_safeguards(
 
     return chunks
 
+
 def validate_chunks(
     chunks: list[dict[str, Any]],
     safeguards: list[dict[str, Any]],
@@ -156,7 +190,13 @@ def validate_chunks(
     seen_chunk_ids: set[str] = set()
     parent_indices: dict[str, list[int]] = {}
 
-    for chunk in chunks:
+    for position, chunk in enumerate(chunks):
+        if not isinstance(chunk, dict):
+            raise ValueError(
+                f"Chunk at position {position} "
+                "is not an object."
+            )
+
         missing_fields = required_chunk_fields - chunk.keys()
 
         if missing_fields:
@@ -203,6 +243,16 @@ def validate_chunks(
         raise ValueError(
             "Safeguards without chunks: "
             f"{sorted(missing_parents)}"
+        )
+
+    unexpected_parents = (
+        chunked_source_ids - source_ids
+    )
+
+    if unexpected_parents:
+        raise ValueError(
+            "Chunks reference unknown safeguards: "
+            f"{sorted(unexpected_parents)}"
         )
 
     for safeguard_id, indices in parent_indices.items():
