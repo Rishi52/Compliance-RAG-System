@@ -203,3 +203,60 @@ needed to claim broad compliance accuracy.
 The generation prompt, citation handling, quality thresholds, and
 development configuration are frozen before the held-out generation
 evaluation.
+
+## G-002: Held-out generation evaluation
+
+Date: 2026-09-05
+
+The generation configuration, citation handling, quality
+thresholds, and development results were committed and tagged as
+`v0.3.0-generation-freeze` before this evaluation.
+
+The 18-question held-out split was evaluated once. No configuration,
+prompt, threshold, dataset, or model changes were made after viewing
+the results.
+
+### Held-out results
+
+| Metric | Development | Held-out |
+|---|---:|---:|
+| Retrieval hit rate | 1.000 | 1.000 |
+| Context hit rate | 0.917 | 0.833 |
+| Answer rate | 1.000 | 1.000 |
+| Abstention rate | 0.000 | 0.000 |
+| Citation-valid rate | 1.000 | 1.000 |
+| Expected-source hit rate | 0.917 | 0.833 |
+| Mean citation coverage | 1.000 | 1.000 |
+| Retry rate | 0.000 | 0.000 |
+| Mean generation attempts | 1.000 | 1.000 |
+
+All frozen generation quality thresholds passed.
+
+### Held-out latency
+
+| Stage | Mean | p95 |
+|---|---:|---:|
+| Retrieval | 2094.53 ms | 2557.00 ms |
+| Context selection | 0.03 ms | 0.05 ms |
+| Generation | 36381.23 ms | 44763.16 ms |
+| Total | 38475.82 ms | 46834.70 ms |
+
+### Held-out source-selection errors
+
+The expected safeguard was absent from selected context for three
+questions:
+
+| Example | Expected | Top selection | Observation |
+|---|---|---|---|
+| `test-001` | `1.5` | `1.3` | Active and passive asset discovery overlap |
+| `test-007` | `7.7` | `16.2` | General vulnerability remediation overlaps with application vulnerability handling |
+| `test-013` | `13.3` | `13.2` | Network and host intrusion detection differ mainly by deployment location |
+
+The expected source was selected for 15 of 18 held-out questions.
+The result exceeds the frozen `0.800` threshold, but the small margin
+and dataset size should be reported as limitations.
+
+Citation validity confirms correct citation syntax and supplied-source
+references. It does not independently establish semantic correctness.
+
+No tuning was performed after the held-out evaluation.

@@ -1,0 +1,933 @@
+{
+  "metadata": {
+    "generated_at_utc": "2026-09-05T19:57:02.140031+00:00",
+    "dataset_name": "cis_controls_retrieval_benchmark",
+    "dataset_version": "0.2.0",
+    "dataset_file_sha256": "aa7794e9c79a440c8deb11259ddb652c2a0bab7132d87a9b7fa79420ba00b2c0",
+    "corpus_file_sha256": "9fa609fc03235102b34122cd3317b2961066f42495b2f63346b4edcaafc2453f",
+    "split": "test",
+    "limit": null,
+    "question_count": 18,
+    "python_version": "3.13.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "ollama_model": "llama3.2:3b",
+    "ollama_temperature": 0.0,
+    "final_top_k": 3,
+    "warmup_performed": true
+  },
+  "summary": {
+    "quality": {
+      "question_count": 18,
+      "retrieval_hit_rate": 1.0,
+      "context_hit_rate": 0.8333333333333334,
+      "answer_rate": 1.0,
+      "abstention_rate": 0.0,
+      "citation_valid_rate": 1.0,
+      "expected_source_hit_rate": 0.8333333333333334,
+      "mean_citation_coverage": 1.0,
+      "retry_rate": 0.0,
+      "mean_generation_attempts": 1
+    },
+    "latency": {
+      "retrieval": {
+        "mean_ms": 2094.5307444393015,
+        "p95_ms": 2556.995759997517,
+        "minimum_ms": 1498.6358999740332,
+        "maximum_ms": 2581.9538000505418
+      },
+      "context_selection": {
+        "mean_ms": 0.03190554626699951,
+        "p95_ms": 0.05274995346553623,
+        "minimum_ms": 0.019000028260052204,
+        "maximum_ms": 0.05700008478015661
+      },
+      "generation": {
+        "mean_ms": 36381.22696666849,
+        "p95_ms": 44763.15972497104,
+        "minimum_ms": 23870.4727999866,
+        "maximum_ms": 47600.04109994043
+      },
+      "total": {
+        "mean_ms": 38475.8242666592,
+        "p95_ms": 46834.70121503923,
+        "minimum_ms": 26244.874999974854,
+        "maximum_ms": 49774.657499976456
+      }
+    }
+  },
+  "questions": [
+    {
+      "example_id": "test-001",
+      "question": "How can an organization discover devices connected to its network without actively probing them?",
+      "category": "paraphrase",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "1.5"
+      ],
+      "answer": "An organization can discover devices connected to its network without actively probing them by utilizing an active discovery tool, as specified in Control 1: Inventory and Control of Enterprise Assets [S1]. The tool should be configured to execute daily, or more frequently, to identify assets connected to the enterprise's network [S1]. This safeguard is part of the CIS Controls v8.1.2 [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:1.3:000",
+          "control_id": "1",
+          "control_name": "Inventory and Control of Enterprise Assets",
+          "safeguard_id": "1.3",
+          "safeguard_name": "Utilize an Active Discovery Tool",
+          "page": 22
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": false,
+      "expected_source_hit": false,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "1.3",
+        "1.5",
+        "1.1"
+      ],
+      "selected_safeguard_ids": [
+        "1.3"
+      ],
+      "source_safeguard_ids": [
+        "1.3"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2374.332799925469,
+        "context_selection": 0.04409998655319214,
+        "generation": 23870.4727999866,
+        "total": 26244.874999974854
+      }
+    },
+    {
+      "example_id": "test-002",
+      "question": "Which safeguard uses application allowlisting to prevent unauthorized software from executing?",
+      "category": "direct",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "2.5"
+      ],
+      "answer": "The safeguard that uses application allowlisting to prevent unauthorized software from executing is Safeguard 2.5 - Allowlist Authorized Software [S1]. This safeguard instructs to use technical controls, such as application allowlisting, to ensure only authorized software can execute or be accessed [S1]. The safeguard also requires reassessment bi-annually, or more frequently [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:2.5:000",
+          "control_id": "2",
+          "control_name": "Inventory and Control of Software Assets",
+          "safeguard_id": "2.5",
+          "safeguard_name": "Allowlist Authorized Software",
+          "page": 27
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "2.5",
+        "2.7",
+        "2.6"
+      ],
+      "selected_safeguard_ids": [
+        "2.5"
+      ],
+      "source_safeguard_ids": [
+        "2.5"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1498.6358999740332,
+        "context_selection": 0.027399975806474686,
+        "generation": 34616.12420005258,
+        "total": 36114.83039997984
+      }
+    },
+    {
+      "example_id": "test-003",
+      "question": "How should sensitive and lower-sensitivity information be separated during processing and storage?",
+      "category": "paraphrase",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "3.12"
+      ],
+      "answer": "Sensitive data should not be processed on enterprise assets intended for lower-sensitivity data [S1]. Data should be segmented based on its sensitivity for processing and storage [S1]. This ensures that sensitive data is not inadvertently exposed to unauthorized access [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:3.12:000",
+          "control_id": "3",
+          "control_name": "Data Protection",
+          "safeguard_id": "3.12",
+          "safeguard_name": "Segment Data Processing and Storage Based on Sensitivity",
+          "page": 32
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "3.12",
+        "3.11",
+        "3.2"
+      ],
+      "selected_safeguard_ids": [
+        "3.12"
+      ],
+      "source_safeguard_ids": [
+        "3.12"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2171.0368000203744,
+        "context_selection": 0.02989999484270811,
+        "generation": 30265.259499894455,
+        "total": 32436.35460000951
+      }
+    },
+    {
+      "example_id": "test-004",
+      "question": "What should be done with unused file-sharing services, web modules, and other unnecessary software functions?",
+      "category": "direct",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "4.8"
+      ],
+      "answer": "Uninstall or disable unused file-sharing services, web modules, and other unnecessary software functions [S1]. [S1] [S1]",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:4.8:000",
+          "control_id": "4",
+          "control_name": "Secure Configuration of Enterprise Assets and Software",
+          "safeguard_id": "4.8",
+          "safeguard_name": "Uninstall or Disable Unnecessary Services on Enterprise Assets and Software",
+          "page": 36
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "4.8",
+        "9.6",
+        "9.4"
+      ],
+      "selected_safeguard_ids": [
+        "4.8"
+      ],
+      "source_safeguard_ids": [
+        "4.8"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1827.496899990365,
+        "context_selection": 0.019000028260052204,
+        "generation": 27244.39450004138,
+        "total": 29071.934700012207
+      }
+    },
+    {
+      "example_id": "test-005",
+      "question": "What inventory should record the owner, purpose, and review date for non-human accounts?",
+      "category": "paraphrase",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "5.5"
+      ],
+      "answer": "Record the owner, purpose, and review date for non-human accounts in the inventory, as required by Control 5: Account Management and Safeguard 5.5 [S1]. The inventory must contain department owner, review date, and purpose for service accounts [S1]. Perform service account reviews to validate that all active accounts are authorized, on a recurring schedule at a minimum quarterly, or more frequently [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:5.5:000",
+          "control_id": "5",
+          "control_name": "Account Management",
+          "safeguard_id": "5.5",
+          "safeguard_name": "Establish and Maintain an Inventory of Service Accounts",
+          "page": 40
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "5.5",
+        "5.1",
+        "2.1"
+      ],
+      "selected_safeguard_ids": [
+        "5.5"
+      ],
+      "source_safeguard_ids": [
+        "5.5"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2053.2695000292733,
+        "context_selection": 0.05000003147870302,
+        "generation": 44262.53359997645,
+        "total": 46315.88540005032
+      }
+    },
+    {
+      "example_id": "test-006",
+      "question": "Which safeguard inventories authentication and authorization systems hosted locally and by remote service providers?",
+      "category": "direct",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "6.6"
+      ],
+      "answer": "Establish and maintain an inventory of the enterprise’s authentication and authorization systems, including those hosted on-site or at a remote service provider [S1]. Review and update the inventory, at a minimum, annually, or more frequently [S1]. This safeguard directly matches the question, as it specifically mentions systems hosted locally and by remote service providers [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:6.6:000",
+          "control_id": "6",
+          "control_name": "Access Control Management",
+          "safeguard_id": "6.6",
+          "safeguard_name": "Establish and Maintain an Inventory of Authentication and Authorization Systems",
+          "page": 44
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "6.6",
+        "8.12",
+        "12.7"
+      ],
+      "selected_safeguard_ids": [
+        "6.6"
+      ],
+      "source_safeguard_ids": [
+        "6.6"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2552.5913999881595,
+        "context_selection": 0.023699947632849216,
+        "generation": 35129.94360004086,
+        "total": 37682.58800008334
+      }
+    },
+    {
+      "example_id": "test-007",
+      "question": "After vulnerabilities are discovered, what recurring action should address them according to remediation priority?",
+      "category": "paraphrase",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "7.7"
+      ],
+      "answer": "Address software vulnerabilities by establishing and maintaining a process to accept and address reports, including providing a means for external entities to report, and updating documentation annually or when significant enterprise changes occur [S2]. This process should include a vulnerability handling policy, responsible party, and a process for intake, assignment, remediation, and remediation testing [S2]. The process should also utilize a vulnerability tracking system with severity ratings and metrics [S2].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:16.2:000",
+          "control_id": "16",
+          "control_name": "Application Software Security",
+          "safeguard_id": "16.2",
+          "safeguard_name": "Establish and Maintain a Process to Accept and Address Software Vulnerabilities",
+          "page": 84
+        },
+        {
+          "source_id": "S2",
+          "chunk_id": "cis-controls-v8.1.2:16.2:001",
+          "control_id": "16",
+          "control_name": "Application Software Security",
+          "safeguard_id": "16.2",
+          "safeguard_name": "Establish and Maintain a Process to Accept and Address Software Vulnerabilities",
+          "page": 84
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": false,
+      "expected_source_hit": false,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "16.2",
+        "7.7",
+        "16.6"
+      ],
+      "selected_safeguard_ids": [
+        "16.2"
+      ],
+      "source_safeguard_ids": [
+        "16.2"
+      ],
+      "source_count": 2,
+      "latency_ms": {
+        "retrieval": 2174.5598000707105,
+        "context_selection": 0.02789997961372137,
+        "generation": 47600.04109994043,
+        "total": 49774.657499976456
+      }
+    },
+    {
+      "example_id": "test-008",
+      "question": "Which safeguard requires audit records to include details such as event source, username, timestamp, and network addresses?",
+      "category": "direct",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "8.5"
+      ],
+      "answer": "Safeguard 8.5 requires audit logs to include details such as event source, username, timestamp, and network addresses [S1]. The specific details required include event source, date, username, timestamp, source addresses, destination addresses, and other useful elements [S1]. This safeguard is part of Control 8: Audit Log Management [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:8.5:000",
+          "control_id": "8",
+          "control_name": "Audit Log Management",
+          "safeguard_id": "8.5",
+          "safeguard_name": "Collect Detailed Audit Logs",
+          "page": 51
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "8.5",
+        "8.12",
+        "8.3"
+      ],
+      "selected_safeguard_ids": [
+        "8.5"
+      ],
+      "source_safeguard_ids": [
+        "8.5"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2414.868999971077,
+        "context_selection": 0.02820009831339121,
+        "generation": 36819.36299998779,
+        "total": 39234.301000018604
+      }
+    },
+    {
+      "example_id": "test-009",
+      "question": "How can the network restrict enterprise assets from reaching unapproved or potentially malicious websites?",
+      "category": "paraphrase",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "9.3"
+      ],
+      "answer": "Enforce and update network-based URL filters to limit enterprise assets from connecting to potentially malicious or unapproved websites, using category-based filtering, reputation-based filtering, or block lists [S1]. Enforce filters for all enterprise assets [S1]. This can be achieved by maintaining and enforcing network-based URL filters [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:9.3:000",
+          "control_id": "9",
+          "control_name": "Email and Web Browser Protections",
+          "safeguard_id": "9.3",
+          "safeguard_name": "Maintain and Enforce Network-Based URL Filters",
+          "page": 55
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "9.3",
+        "1.2",
+        "5.4"
+      ],
+      "selected_safeguard_ids": [
+        "9.3"
+      ],
+      "source_safeguard_ids": [
+        "9.3"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2105.400600004941,
+        "context_selection": 0.024799956008791924,
+        "generation": 37879.983699996956,
+        "total": 39985.434699920006
+      }
+    },
+    {
+      "example_id": "test-010",
+      "question": "Which safeguard enables protections such as DEP and exploit-guard capabilities on enterprise assets and software?",
+      "category": "direct",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "10.5"
+      ],
+      "answer": "Enable anti-exploitation features on enterprise assets and software, such as Microsoft Data Execution Prevention (DEP), Windows Defender Exploit Guard (WDEG), or Apple System Integrity Protection (SIP) and Gatekeeper, is safeguard 10.5 [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:10.5:000",
+          "control_id": "10",
+          "control_name": "Malware Defenses",
+          "safeguard_id": "10.5",
+          "safeguard_name": "Enable Anti-Exploitation Features",
+          "page": 59
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "10.5",
+        "4.11",
+        "4.7"
+      ],
+      "selected_safeguard_ids": [
+        "10.5"
+      ],
+      "source_safeguard_ids": [
+        "10.5"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1902.852899977006,
+        "context_selection": 0.024799956008791924,
+        "generation": 32870.621300069615,
+        "total": 34773.522899951786
+      }
+    },
+    {
+      "example_id": "test-011",
+      "question": "How often should an organization verify that a sample of its backups can actually be restored?",
+      "category": "paraphrase",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "11.5"
+      ],
+      "answer": "An organization should test a sample of its backups quarterly, or more frequently, for a sampling of in-scope enterprise assets [S1]. This is specified in safeguard 11.5 - Test Data Recovery [S1]. The frequency of testing is not further defined in the provided evidence [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:11.5:000",
+          "control_id": "11",
+          "control_name": "Data Recovery",
+          "safeguard_id": "11.5",
+          "safeguard_name": "Test Data Recovery",
+          "page": 62
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "11.5",
+        "11.2",
+        "11.1"
+      ],
+      "selected_safeguard_ids": [
+        "11.5"
+      ],
+      "source_safeguard_ids": [
+        "11.5"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2467.813599971123,
+        "context_selection": 0.024099950678646564,
+        "generation": 32220.061299973167,
+        "total": 34687.94279999565
+      }
+    },
+    {
+      "example_id": "test-012",
+      "question": "Which safeguard requires separate computing resources for administrative tasks?",
+      "category": "direct",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "12.8"
+      ],
+      "answer": "Safeguard 12.8 requires separate computing resources for administrative tasks, either physically or logically separated, for all administrative tasks or tasks requiring administrative access [S1]. This safeguard is part of Control 12: Network Infrastructure Management [S1]. The computing resources should be segmented from the enterprise's primary network and not be allowed internet access [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:12.8:000",
+          "control_id": "12",
+          "control_name": "Network Infrastructure Management",
+          "safeguard_id": "12.8",
+          "safeguard_name": "Establish and Maintain Dedicated Computing Resources for All Administrative Work",
+          "page": 66
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "12.8",
+        "6.5",
+        "5.4"
+      ],
+      "selected_safeguard_ids": [
+        "12.8"
+      ],
+      "source_safeguard_ids": [
+        "12.8"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1715.5085999984294,
+        "context_selection": 0.05700008478015661,
+        "generation": 41666.2882999517,
+        "total": 43381.924899993464
+      }
+    },
+    {
+      "example_id": "test-013",
+      "question": "What detection capability monitors network traffic for signs of intrusion rather than running on individual hosts?",
+      "category": "paraphrase",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "13.3"
+      ],
+      "answer": "A network traffic monitoring system monitors network traffic for signs of intrusion, rather than running on individual hosts, as part of the Network Monitoring and Defense control [S1]. This is achieved by deploying a network-based intrusion detection solution, which is the opposite of deploying a host-based intrusion detection solution on individual hosts [S1]. Insufficient compliance data found [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:13.2:000",
+          "control_id": "13",
+          "control_name": "Network Monitoring and Defense",
+          "safeguard_id": "13.2",
+          "safeguard_name": "Deploy a Host-Based Intrusion Detection Solution",
+          "page": 69
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": false,
+      "expected_source_hit": false,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "13.2",
+        "13.3",
+        "13.7"
+      ],
+      "selected_safeguard_ids": [
+        "13.2"
+      ],
+      "source_safeguard_ids": [
+        "13.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2534.449299913831,
+        "context_selection": 0.051999930292367935,
+        "generation": 38645.793900010176,
+        "total": 41180.33500004094
+      }
+    },
+    {
+      "example_id": "test-014",
+      "question": "What training teaches workers to identify and report missing software updates or failures in automated patching?",
+      "category": "direct",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "14.7"
+      ],
+      "answer": "Train workforce on how to identify and report missing software updates or failures in automated patching, including notifying IT personnel of any failures in automated processes and tools [S1]. This training is part of Control 14: Security Awareness and Skills Training [S1]. The training should include verifying and reporting out-of-date software patches or any failures in automated processes and tools [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:14.7:000",
+          "control_id": "14",
+          "control_name": "Security Awareness and Skills Training",
+          "safeguard_id": "14.7",
+          "safeguard_name": "Train Workforce on How to Identify and Report if Their Enterprise Assets are Missing Security Updates",
+          "page": 74
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "14.7",
+        "7.4",
+        "7.3"
+      ],
+      "selected_safeguard_ids": [
+        "14.7"
+      ],
+      "source_safeguard_ids": [
+        "14.7"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1802.3622001055628,
+        "context_selection": 0.024699955247342587,
+        "generation": 42862.12970002089,
+        "total": 44664.54139992129
+      }
+    },
+    {
+      "example_id": "test-015",
+      "question": "How should suppliers be grouped according to factors such as data sensitivity, data volume, and availability requirements?",
+      "category": "paraphrase",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "15.3"
+      ],
+      "answer": "Suppliers should be grouped according to factors such as data sensitivity, data volume, and availability requirements, as these characteristics are considered in the classification of service providers [S1]. Classification consideration may include one or more characteristics, such as data sensitivity, data volume, availability requirements, and others [S1]. Update and review classifications annually, or when significant enterprise changes occur [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:15.3:000",
+          "control_id": "15",
+          "control_name": "Service Provider Management",
+          "safeguard_id": "15.3",
+          "safeguard_name": "Classify Service Providers",
+          "page": 78
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "15.3",
+        "3.1",
+        "3.12"
+      ],
+      "selected_safeguard_ids": [
+        "15.3"
+      ],
+      "source_safeguard_ids": [
+        "15.3"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2581.9538000505418,
+        "context_selection": 0.025099958293139935,
+        "generation": 43328.63460003864,
+        "total": 45910.6556000188
+      }
+    },
+    {
+      "example_id": "test-016",
+      "question": "Which safeguard recommends vetted modules or platform services for identity, encryption, auditing, and logging?",
+      "category": "direct",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "16.11"
+      ],
+      "answer": "Leverage vetted modules or services for application security components, such as identity management, encryption, auditing, and logging, to minimize design or implementation errors [S1]. Modern operating systems provide effective mechanisms for identification, authentication, and authorization [S1]. Use only standardized, currently accepted, and extensively reviewed encryption algorithms [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:16.11:000",
+          "control_id": "16",
+          "control_name": "Application Software Security",
+          "safeguard_id": "16.11",
+          "safeguard_name": "Leverage Vetted Modules or Services for Application Security Components",
+          "page": 86
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "16.11",
+        "8.5",
+        "8.1"
+      ],
+      "selected_safeguard_ids": [
+        "16.11"
+      ],
+      "source_safeguard_ids": [
+        "16.11"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2424.054399947636,
+        "context_selection": 0.03900006413459778,
+        "generation": 40605.8733999962,
+        "total": 43030.006199958734
+      }
+    },
+    {
+      "example_id": "test-017",
+      "question": "What activity captures lessons learned and follow-up actions to prevent a security incident from recurring?",
+      "category": "paraphrase",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "17.8"
+      ],
+      "answer": "Conduct post-incident reviews to identify lessons learned and follow-up actions to prevent security incident recurrence [S1]. This activity is captured by Safeguard 17.8: Conduct Post-Incident Reviews [S1]. Post-incident reviews help prevent incident recurrence through identifying lessons learned and follow-up actions [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:17.8:000",
+          "control_id": "17",
+          "control_name": "Incident Response Management",
+          "safeguard_id": "17.8",
+          "safeguard_name": "Conduct Post-Incident Reviews",
+          "page": 91
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "17.8",
+        "17.7",
+        "17.9"
+      ],
+      "selected_safeguard_ids": [
+        "17.8"
+      ],
+      "source_safeguard_ids": [
+        "17.8"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1515.877699945122,
+        "context_selection": 0.02729997504502535,
+        "generation": 35119.69580000732,
+        "total": 36635.63489995431
+      }
+    },
+    {
+      "example_id": "test-018",
+      "question": "What should be validated after every penetration test, with detection rules updated when necessary?",
+      "category": "direct",
+      "split": "test",
+      "expected_safeguard_ids": [
+        "18.4"
+      ],
+      "answer": "Validate security measures after every penetration test, and update detection rules when necessary [S1]. If deemed necessary, modify rulesets and capabilities to detect techniques used during testing [S1]. This is in line with safeguard 18.4 [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:18.4:000",
+          "control_id": "18",
+          "control_name": "Penetration Testing",
+          "safeguard_id": "18.4",
+          "safeguard_name": "Validate Security Measures",
+          "page": 95
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "18.4",
+        "18.3",
+        "16.13"
+      ],
+      "selected_safeguard_ids": [
+        "18.4"
+      ],
+      "source_safeguard_ids": [
+        "18.4"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1584.4882000237703,
+        "context_selection": 0.02529995981603861,
+        "generation": 29854.871100047603,
+        "total": 31439.411800005473
+      }
+    }
+  ]
+}
