@@ -8,6 +8,18 @@ from evaluation.check_retrieval_quality import (
     load_report,
 )
 
+HELD_OUT_REPORT_PATH = DEFAULT_REPORT_PATH.with_name(
+    "retrieval_benchmark_test_results.json"
+)
+
+def test_saved_held_out_report_passes_quality_gate() -> None:
+    report = load_report(HELD_OUT_REPORT_PATH)
+    method_summary = get_method_summary(
+        report,
+        DEFAULT_METHOD,
+    )
+
+    assert find_quality_failures(method_summary) == []
 
 def test_saved_development_report_passes_quality_gate() -> None:
     report = load_report(DEFAULT_REPORT_PATH)
