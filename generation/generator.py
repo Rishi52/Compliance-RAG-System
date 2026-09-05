@@ -14,6 +14,7 @@ from config.settings import settings
 
 INSUFFICIENT_RESPONSE = "Insufficient compliance data found."
 CITATION_PATTERN = re.compile(r"\[(S\d+)\]")
+CITATION_TOKEN_PATTERN = re.compile(r"\[S[^\]]*\]")
 
 REQUIRED_METADATA_FIELDS = {
     "chunk_id",
@@ -125,6 +126,23 @@ class ComplianceGenerator:
         if answer == INSUFFICIENT_RESPONSE:
             return True, None
 
+        citation_tokens = CITATION_TOKEN_PATTERN.findall(answer)
+
+        malformed_citations = sorted(
+            {
+                token
+                for token in citation_tokens
+                if CITATION_PATTERN.fullmatch(token) is None
+            }
+        )
+
+        if malformed_citations:
+            return (
+                False,
+                "The answer contains malformed citations: "
+                f"{malformed_citations}",
+            )
+
         allowed_labels = {
             source["source_id"]
             for source in sources
@@ -144,6 +162,54 @@ class ComplianceGenerator:
             )
 
         return True, None
+
+    @staticmethod
+    def repair_single_source_citations(
+        answer: str,
+        sources: list[dict[str, Any]],
+    ) -> str:
+        """Repair every sentence when one source is available."""
+
+        if (
+            answer == INSUFFICIENT_RESPONSE
+            or len(sources) != 1
+        ):
+            return answer
+
+        source_id = str(sources[0]["source_id"])
+
+        normalized_answer = CITATION_TOKEN_PATTERN.sub(
+            f"[{source_id}]",
+            answer.strip(),
+        )
+
+        sentences = [
+            sentence.strip()
+            for sentence in re.split(
+                r"(?<=[.!?])\s+|\n+",
+                normalized_answer,
+            )
+            if sentence.strip()
+        ]
+
+        repaired_sentences: list[str] = []
+
+        for sentence in sentences:
+            if CITATION_PATTERN.search(sentence):
+                repaired_sentences.append(sentence)
+                continue
+
+            if sentence.endswith((".", "!", "?")):
+                repaired_sentences.append(
+                    f"{sentence[:-1].rstrip()} "
+                    f"[{source_id}]{sentence[-1]}"
+                )
+            else:
+                repaired_sentences.append(
+                    f"{sentence} [{source_id}]"
+                )
+
+        return " ".join(repaired_sentences)
 
     def generate(
         self,
@@ -166,13 +232,27 @@ class ComplianceGenerator:
             }
 
         evidence, sources = self.build_evidence(documents)
-
+        allowed_labels = ", ".join(
+            f"[{source['source_id']}]"
+            for source in sources
+        )
         user_prompt = (
-            "Answer the question using only the evidence below.\n"
-            "Use the source labels in square brackets after every "
-            "supported claim.\n\n"
+            f"Question:\n{query}\n\n"
             f"Evidence:\n{evidence}\n\n"
-            f"Question:\n{query}"
+            "Required response format:\n"
+            "- Answer using only the supplied evidence.\n"
+            "- Answer directly in no more than three concise "
+            "sentences.\n"
+            "- End every factual sentence with one or more "
+            "allowed citation labels.\n"
+            f"- Allowed citation labels: {allowed_labels}\n"
+            "- Never create or modify a citation label.\n"
+            "- If the evidence does not answer the question, "
+            f"return exactly: {INSUFFICIENT_RESPONSE}\n"
+            "- Return only the answer."
+            "- Citation labels identify evidence blocks, not "
+            "safeguard IDs. For example, safeguard 3.4 may still "
+            "use citation [S1].\n"
         )
 
         messages: list[Any] = [
@@ -194,6 +274,10 @@ class ComplianceGenerator:
 
             if not answer:
                 answer = INSUFFICIENT_RESPONSE
+            answer = self.repair_single_source_citations(
+                answer,
+                sources,
+            )
 
             citation_valid, validation_error = (
                 self.validate_citations(answer, sources)
@@ -214,10 +298,18 @@ class ComplianceGenerator:
                     AIMessage(content=answer),
                     HumanMessage(
                         content=(
-                            "Rewrite the answer. It failed validation: "
-                            f"{validation_error} "
-                            "Use only the supplied evidence labels and "
-                            "place citations after every factual claim."
+                            "Return only a corrected answer.\n"
+                            "The previous response failed citation "
+                            "validation.\n"
+                            f"Validation error: {validation_error}\n"
+                            f"Allowed citation labels: "
+                            f"{allowed_labels}\n"
+                            "Use only the supplied evidence. End "
+                            "every factual sentence with an allowed "
+                            "citation label. Do not explain the "
+                            "correction. If the evidence does not "
+                            "answer the question, return exactly: "
+                            f"{INSUFFICIENT_RESPONSE}"
                         )
                     ),
                 ]

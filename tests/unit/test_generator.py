@@ -228,9 +228,18 @@ def test_generate_retries_invalid_citations() -> None:
         ]
     )
 
+    documents = [
+        make_document(),
+        make_document(
+            chunk_id="doc:2.1:000",
+            safeguard_id="2.1",
+            content="Maintain a software inventory.",
+        ),
+    ]
+
     result = generator.generate(
         query="What should be maintained?",
-        documents=[make_document()],
+        documents=documents,
     )
 
     assert result["answer"] == (
@@ -241,7 +250,7 @@ def test_generate_retries_invalid_citations() -> None:
     assert len(fake_llm.calls) == 2
     assert len(fake_llm.calls[1]) == 4
     assert (
-        "failed validation"
+        "failed citation validation"
         in fake_llm.calls[1][-1].content
     )
 
@@ -254,9 +263,18 @@ def test_generate_abstains_after_failed_retries() -> None:
         ]
     )
 
+    documents = [
+        make_document(),
+        make_document(
+            chunk_id="doc:2.1:000",
+            safeguard_id="2.1",
+            content="Maintain a software inventory.",
+        ),
+    ]
+
     result = generator.generate(
         query="What should be maintained?",
-        documents=[make_document()],
+        documents=documents,
     )
 
     assert result["answer"] == INSUFFICIENT_RESPONSE
@@ -266,7 +284,6 @@ def test_generate_abstains_after_failed_retries() -> None:
         "The answer contains no evidence citations."
     )
     assert len(fake_llm.calls) == 2
-
 
 def test_generate_converts_blank_response_to_abstention() -> None:
     generator, _ = build_generator(["   "])
@@ -346,3 +363,79 @@ def test_default_generator_uses_ollama_settings(
         "base_url": settings.ollama_base_url,
         "temperature": settings.ollama_temperature,
     }
+def test_repair_adds_missing_single_source_citation() -> None:
+    answer = (
+        ComplianceGenerator.repair_single_source_citations(
+            "Maintain the inventory.",
+            [{"source_id": "S1"}],
+        )
+    )
+
+    assert answer == "Maintain the inventory [S1]."
+
+
+def test_repair_replaces_invalid_single_source_citation() -> None:
+    answer = (
+        ComplianceGenerator.repair_single_source_citations(
+            "Maintain the inventory [S6].",
+            [{"source_id": "S1"}],
+        )
+    )
+
+    assert answer == "Maintain the inventory [S1]."
+
+
+def test_repair_does_not_guess_between_sources() -> None:
+    answer = (
+        ComplianceGenerator.repair_single_source_citations(
+            "Maintain the inventory.",
+            [
+                {"source_id": "S1"},
+                {"source_id": "S2"},
+            ],
+        )
+    )
+
+    assert answer == "Maintain the inventory."
+
+def test_repair_cites_every_single_source_sentence() -> None:
+    answer = (
+        ComplianceGenerator.repair_single_source_citations(
+            (
+                "Maintain the inventory. "
+                "Review it at least annually."
+            ),
+            [{"source_id": "S1"}],
+        )
+    )
+
+    assert answer == (
+        "Maintain the inventory [S1]. "
+        "Review it at least annually [S1]."
+    )
+def test_validate_citations_rejects_malformed_label() -> None:
+    valid, error = ComplianceGenerator.validate_citations(
+        (
+            "Retain data according to the documented "
+            "process [S3.4] [S1]."
+        ),
+        [{"source_id": "S1"}],
+    )
+
+    assert valid is False
+    assert error is not None
+    assert "malformed citations" in error
+    assert "[S3.4]" in error
+
+
+def test_repair_replaces_safeguard_style_citation() -> None:
+    answer = (
+        ComplianceGenerator.repair_single_source_citations(
+            "Retain data according to policy [S3.4].",
+            [{"source_id": "S1"}],
+        )
+    )
+
+    assert answer == (
+        "Retain data according to policy [S1]."
+    )

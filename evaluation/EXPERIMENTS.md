@@ -1,4 +1,4 @@
-# Retrieval Experiments
+# Evaluation Experiments
 
 ## Evaluation protocol
 
@@ -109,3 +109,97 @@ universal compliance benchmark.
 
 No retrieval tuning was performed after viewing the held-out
 results.
+
+## G-001: Generation development evaluation
+
+Date: 2026-09-05
+
+### Evaluation protocol
+
+The generation benchmark uses the same frozen dataset, corpus,
+retrieval configuration, and 36-question development split as the
+retrieval benchmark.
+
+The complete pipeline includes hybrid retrieval, safeguard context
+selection, Ollama generation, citation validation, and safe
+single-source citation normalization.
+
+All questions in dataset version `0.2.0` are answerable. Therefore,
+this benchmark does not measure correct abstention on out-of-scope
+questions.
+
+### Frozen quality thresholds
+
+| Metric | Minimum |
+|---|---:|
+| Retrieval hit rate | 0.950 |
+| Context hit rate | 0.800 |
+| Answer rate | 0.800 |
+| Citation-valid rate | 0.800 |
+| Expected-source hit rate | 0.800 |
+| Mean citation coverage | 0.900 |
+
+### Development results
+
+| Metric | Initial run | Final run |
+|---|---:|---:|
+| Retrieval hit rate | 1.000 | 1.000 |
+| Context hit rate | 0.917 | 0.917 |
+| Answer rate | 0.417 | **1.000** |
+| Abstention rate | 0.583 | **0.000** |
+| Citation-valid rate | 0.472 | **1.000** |
+| Expected-source hit rate | 0.917 | 0.917 |
+| Mean citation coverage | 0.967 | **1.000** |
+| Retry rate | 0.528 | **0.000** |
+| Mean generation attempts | 1.528 | **1.000** |
+
+The initial run showed that the model frequently produced grounded
+answers without the required evidence-label syntax. Safe citation
+normalization was therefore added only when exactly one evidence
+source is available. When multiple sources are available, the
+generator must still produce and validate its own citation labels.
+
+Citation validation was also strengthened to reject malformed labels
+such as `[S3.4]`. Evidence labels such as `[S1]` must not be confused
+with CIS safeguard identifiers such as `3.4`.
+
+### Final development latency
+
+| Stage | Mean | p95 |
+|---|---:|---:|
+| Retrieval | 1676.24 ms | 2143.73 ms |
+| Context selection | 0.02 ms | 0.04 ms |
+| Generation | 35766.16 ms | 45351.50 ms |
+| Total | 37442.45 ms | 47604.66 ms |
+
+Latency is machine- and model-dependent. Generation accounts for
+most end-to-end latency.
+
+### Remaining error analysis
+
+The expected source was absent from selected context for three of 36
+questions:
+
+| Example | Expected | Selected | Observation |
+|---|---|---|---|
+| `seed-011` | `11.1` | `17.3` | Data restoration was confused with incident reporting |
+| `seed-018` | `18.5` | `18.2` | Internal penetration testing was confused with external testing |
+| `dev-031` | `13.2` | `13.7` | Host intrusion detection was confused with host intrusion prevention |
+
+These are retrieval/context-selection errors rather than citation
+formatting errors. No special-case tuning was introduced because it
+could overfit the development set.
+
+### Interpretation and limitations
+
+Citation validity measures citation syntax and whether labels refer
+to supplied evidence. It does not independently prove that every
+generated claim is semantically correct.
+
+Expected-source hit rate provides a safeguard-level grounding proxy,
+but a larger benchmark and human answer-quality assessment would be
+needed to claim broad compliance accuracy.
+
+The generation prompt, citation handling, quality thresholds, and
+development configuration are frozen before the held-out generation
+evaluation.
