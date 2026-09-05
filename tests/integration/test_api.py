@@ -370,3 +370,68 @@ def test_lifespan_cleans_up_services(services) -> None:
     assert application.state.retriever is None
     assert application.state.context_selector is None
     assert application.state.generator is None
+
+def test_readiness_hides_index_failure(
+    client,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    test_client, services = client
+    retriever, _, _ = services
+
+    def fail_count() -> int:
+        raise RuntimeError("Private index failure.")
+
+    monkeypatch.setattr(
+        retriever.vector.collection,
+        "count",
+        fail_count,
+    )
+
+    response = test_client.get("/health/ready")
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "detail": "Unable to verify retrieval index."
+    }
+    assert "Private index failure" not in response.text
+
+
+def test_lifespan_rejects_incomplete_services() -> None:
+    application = create_app(
+        service_factory=lambda: (
+            FakeRetriever(),
+            None,
+            FakeGenerator(),
+        )
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match="three initialized services",
+    ):
+        with TestClient(application):
+            pass
+
+    assert application.state.retriever is None
+    assert application.state.context_selector is None
+    assert application.state.generator is None
+
+
+def test_lifespan_cleans_up_after_factory_failure() -> None:
+    def broken_factory():
+        raise RuntimeError("Synthetic startup failure.")
+
+    application = create_app(
+        service_factory=broken_factory
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match="Synthetic startup failure",
+    ):
+        with TestClient(application):
+            pass
+
+    assert application.state.retriever is None
+    assert application.state.context_selector is None
+    assert application.state.generator is None

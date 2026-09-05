@@ -67,6 +67,9 @@ jobs:
             retrieval \
             scripts \
             tests
-
+      - name: Validate container configuration
+        run: |
+          docker build --check .
+          docker compose config --quiet
       - name: Run test suite
         run: python -m pytest -q

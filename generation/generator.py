@@ -36,6 +36,7 @@ class ComplianceGenerator:
     ) -> None:
         self.llm = llm or ChatOllama(
             model=settings.ollama_model,
+            base_url=settings.ollama_base_url,
             temperature=settings.ollama_temperature,
         )
 

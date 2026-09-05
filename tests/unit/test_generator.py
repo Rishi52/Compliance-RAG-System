@@ -319,3 +319,30 @@ def test_generate_rejects_unsupported_model_content() -> None:
             query="What should be maintained?",
             documents=[make_document()],
         )
+def test_default_generator_uses_ollama_settings(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from config.settings import settings
+
+    captured: dict[str, object] = {}
+    fake_llm = object()
+
+    def fake_chat_ollama(**kwargs):
+        captured.update(kwargs)
+        return fake_llm
+
+    monkeypatch.setattr(
+        "generation.generator.ChatOllama",
+        fake_chat_ollama,
+    )
+
+    generator = ComplianceGenerator(
+        system_prompt="Test prompt"
+    )
+
+    assert generator.llm is fake_llm
+    assert captured == {
+        "model": settings.ollama_model,
+        "base_url": settings.ollama_base_url,
+        "temperature": settings.ollama_temperature,
+    }

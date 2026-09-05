@@ -9,14 +9,13 @@ from pydantic import BaseModel, Field, field_validator
 
 from config.settings import settings
 
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
-ServiceFactory = Callable[
-    [],
-    tuple[Any, Any, Any],
-]
+Services = tuple[Any, Any, Any]
+ServiceFactory = Callable[[], Services]
+
 
 class QuestionRequest(BaseModel):
     """Incoming compliance question."""
@@ -58,7 +57,7 @@ class ChatResponse(BaseModel):
     generation_attempts: int
 
 
-def build_services() -> tuple[Any, Any, Any]:
+def build_services() -> Services:
     """Construct production services only during API startup."""
 
     from generation.context_selector import (
@@ -74,31 +73,89 @@ def build_services() -> tuple[Any, Any, Any]:
     )
 
 
+def clear_services(application: FastAPI) -> None:
+    """Remove application service references."""
+
+    application.state.retriever = None
+    application.state.context_selector = None
+    application.state.generator = None
+
+
+def get_services(request: Request) -> Services:
+    """Return initialized services or report unavailability."""
+
+    services = (
+        getattr(request.app.state, "retriever", None),
+        getattr(
+            request.app.state,
+            "context_selector",
+            None,
+        ),
+        getattr(request.app.state, "generator", None),
+    )
+
+    if any(service is None for service in services):
+        raise HTTPException(
+            status_code=503,
+            detail="Application services are not ready.",
+        )
+
+    return services
+
+
 def create_lifespan(service_factory: ServiceFactory):
-    """Create an application lifespan using the supplied services."""
+    """Create an application lifespan using supplied services."""
 
     @asynccontextmanager
-    async def application_lifespan(application: FastAPI):
+    async def application_lifespan(
+        application: FastAPI,
+    ):
+        clear_services(application)
+
         logger.info(
             "Loading retrieval and generation services."
         )
 
-        (
-            application.state.retriever,
-            application.state.context_selector,
-            application.state.generator,
-        ) = service_factory()
+        try:
+            services = service_factory()
+
+            if (
+                not isinstance(services, tuple)
+                or len(services) != 3
+                or any(
+                    service is None
+                    for service in services
+                )
+            ):
+                raise RuntimeError(
+                    "The service factory must return three "
+                    "initialized services."
+                )
+
+            (
+                application.state.retriever,
+                application.state.context_selector,
+                application.state.generator,
+            ) = services
+        except Exception:
+            clear_services(application)
+            logger.exception(
+                "Compliance RAG service startup failed."
+            )
+            raise
 
         logger.info("Compliance RAG services are ready.")
 
         try:
             yield
         finally:
-            application.state.retriever = None
-            application.state.context_selector = None
-            application.state.generator = None
+            clear_services(application)
+            logger.info(
+                "Compliance RAG services were released."
+            )
 
     return application_lifespan
+
 
 def create_app(
     service_factory: ServiceFactory = build_services,
@@ -109,7 +166,8 @@ def create_app(
         title=settings.app_name,
         version=settings.app_version,
         description=(
-            "Evidence-grounded CIS Controls question-answering API."
+            "Evidence-grounded CIS Controls "
+            "question-answering API."
         ),
         lifespan=create_lifespan(service_factory),
     )
@@ -126,7 +184,6 @@ def create_app(
 
     return application
 
-router = APIRouter()
 
 @router.get("/")
 def root() -> dict[str, str]:
@@ -145,42 +202,27 @@ def liveness() -> dict[str, str]:
 
 @router.get("/health/ready")
 def readiness(request: Request) -> dict[str, Any]:
-    """Confirm that retrieval and generation are initialized."""
+    """Confirm retrieval and generation are initialized."""
 
-    retriever = getattr(
-        request.app.state,
-        "retriever",
-        None,
-    )
-    context_selector = getattr(
-        request.app.state,
-        "context_selector",
-        None,
-    )
-    generator = getattr(
-        request.app.state,
-        "generator",
-        None,
-    )
+    retriever, _, _ = get_services(request)
 
-    if any(
-        service is None
-        for service in (
-            retriever,
-            context_selector,
-            generator,
+    try:
+        indexed_chunks = int(
+            retriever.vector.collection.count()
         )
-    ):
+    except Exception as error:
+        logger.exception(
+            "Retrieval index readiness check failed."
+        )
+
         raise HTTPException(
             status_code=503,
-            detail="Application services are not ready.",
-        )
+            detail="Unable to verify retrieval index.",
+        ) from error
 
     return {
         "status": "ready",
-        "indexed_chunks": (
-            retriever.vector.collection.count()
-        ),
+        "indexed_chunks": indexed_chunks,
         "generation_model": settings.ollama_model,
     }
 
@@ -195,34 +237,9 @@ def chat(
 ) -> ChatResponse:
     """Retrieve evidence and generate a grounded answer."""
 
-    retriever = getattr(
-        request.app.state,
-        "retriever",
-        None,
+    retriever, context_selector, generator = (
+        get_services(request)
     )
-    context_selector = getattr(
-        request.app.state,
-        "context_selector",
-        None,
-    )
-    generator = getattr(
-        request.app.state,
-        "generator",
-        None,
-    )
-
-    if any(
-        service is None
-        for service in (
-            retriever,
-            context_selector,
-            generator,
-        )
-    ):
-        raise HTTPException(
-            status_code=503,
-            detail="Application services are not ready.",
-        )
 
     try:
         ranked_documents = retriever.search(
@@ -250,7 +267,9 @@ def chat(
 
         raise HTTPException(
             status_code=500,
-            detail="Unable to process the compliance question.",
+            detail=(
+                "Unable to process the compliance question."
+            ),
         ) from error
 
     sources = [
@@ -264,4 +283,6 @@ def chat(
         citation_valid=result["citation_valid"],
         generation_attempts=result["generation_attempts"],
     )
+
+
 app = create_app()
