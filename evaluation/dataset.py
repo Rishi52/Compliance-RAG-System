@@ -20,7 +20,9 @@ from config.settings import settings
 
 EVALUATION_ROOT = Path(__file__).resolve().parent
 DEFAULT_DATASET_PATH = (
-    EVALUATION_ROOT / "datasets" / "retrieval_seed.jsonl"
+    EVALUATION_ROOT
+    / "datasets"
+    / "retrieval_benchmark.jsonl"
 )
 DEFAULT_MANIFEST_PATH = (
     EVALUATION_ROOT / "datasets" / "manifest.json"
@@ -28,6 +30,17 @@ DEFAULT_MANIFEST_PATH = (
 
 SAFEGUARD_ID_PATTERN = re.compile(r"^\d+\.\d+$")
 
+DATASET_SPLITS = (
+    "dev",
+    "test",
+)
+
+DATASET_CATEGORIES = (
+    "direct",
+    "paraphrase",
+    "multi_safeguard",
+    "unanswerable",
+)
 
 class RetrievalExample(BaseModel):
     """One gold-labelled retrieval evaluation question."""
@@ -165,6 +178,46 @@ def load_examples(
 
     return examples
 
+def calculate_split_counts(
+    examples: list[RetrievalExample],
+) -> dict[str, int]:
+    """Count examples in every supported dataset split."""
+
+    return {
+        split: sum(
+            example.split == split
+            for example in examples
+        )
+        for split in DATASET_SPLITS
+    }
+
+
+def calculate_category_counts(
+    examples: list[RetrievalExample],
+) -> dict[str, int]:
+    """Count examples in every supported category."""
+
+    return {
+        category: sum(
+            example.category == category
+            for example in examples
+        )
+        for category in DATASET_CATEGORIES
+    }
+
+
+def calculate_text_sha256(path: Path) -> str:
+    """Hash UTF-8 text using normalized Unix line endings."""
+
+    text = path.read_text(encoding="utf-8")
+    normalized_text = (
+        text.replace("\r\n", "\n")
+        .replace("\r", "\n")
+    )
+
+    return hashlib.sha256(
+        normalized_text.encode("utf-8")
+    ).hexdigest()
 
 def calculate_file_sha256(path: Path) -> str:
     """Calculate the SHA-256 of a file."""
@@ -184,6 +237,7 @@ def calculate_file_sha256(path: Path) -> str:
 def validate_dataset(
     examples: list[RetrievalExample],
     manifest: dict[str, Any],
+    dataset_path: Path = DEFAULT_DATASET_PATH,
 ) -> None:
     """Validate gold labels and corpus provenance."""
 
@@ -213,6 +267,60 @@ def validate_dataset(
         )
 
     manifest_count = manifest.get("question_count")
+
+    actual_split_counts = calculate_split_counts(
+        examples
+    )
+    expected_split_counts = manifest.get(
+        "split_counts"
+    )
+
+    if expected_split_counts != actual_split_counts:
+        raise ValueError(
+            "Dataset split counts do not match the "
+            "manifest. Expected "
+            f"{expected_split_counts}, found "
+            f"{actual_split_counts}."
+        )
+
+    actual_category_counts = (
+        calculate_category_counts(examples)
+    )
+    expected_category_counts = manifest.get(
+        "category_counts"
+    )
+
+    if (
+        expected_category_counts
+        != actual_category_counts
+    ):
+        raise ValueError(
+            "Dataset category counts do not match the "
+            "manifest. Expected "
+            f"{expected_category_counts}, found "
+            f"{actual_category_counts}."
+        )
+
+    expected_dataset_hash = str(
+        manifest.get("dataset_file_sha256", "")
+    ).lower()
+
+    if len(expected_dataset_hash) != 64:
+        raise ValueError(
+            "Manifest must contain a valid "
+            "dataset_file_sha256."
+        )
+
+    actual_dataset_hash = calculate_text_sha256(
+        dataset_path
+    )
+
+    if actual_dataset_hash != expected_dataset_hash:
+        raise ValueError(
+            "Dataset hash does not match the manifest. "
+            f"Expected {expected_dataset_hash}, found "
+            f"{actual_dataset_hash}."
+        )
 
     if manifest_count != len(examples):
         raise ValueError(
@@ -256,6 +364,10 @@ def main() -> None:
     print(f"Examples: {len(examples)}")
     print(f"Categories: {dict(category_counts)}")
     print(f"Splits: {dict(split_counts)}")
+    print(
+        "Dataset SHA-256:",
+        manifest["dataset_file_sha256"],
+    )
     print(
         "Corpus SHA-256:",
         manifest["corpus_file_sha256"],

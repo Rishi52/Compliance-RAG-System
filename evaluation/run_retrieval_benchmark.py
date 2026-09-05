@@ -233,6 +233,21 @@ def write_csv_report(
                 row.update(method_result["metrics"])
                 writer.writerow(row)
 
+def build_report_paths(
+    dataset_path: Path,
+    split: str,
+    output_directory: Path,
+) -> tuple[Path, Path]:
+    """Build unique JSON and CSV paths for a benchmark run."""
+
+    report_stem = (
+        f"{dataset_path.stem}_{split}_results"
+    )
+
+    return (
+        output_directory / f"{report_stem}.json",
+        output_directory / f"{report_stem}.csv",
+    )
 
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -267,7 +282,11 @@ def main() -> None:
 
     all_examples = load_examples(arguments.dataset)
     manifest = load_manifest()
-    validate_dataset(all_examples, manifest)
+    validate_dataset(
+        all_examples,
+        manifest,
+        arguments.dataset,
+    )
 
     examples = [
         example
@@ -460,6 +479,9 @@ def main() -> None:
             "dataset_version": manifest[
                 "dataset_version"
             ],
+            "dataset_file_sha256": manifest[
+                "dataset_file_sha256"
+            ],
             "split": arguments.split,
             "corpus_file_sha256": manifest[
                 "corpus_file_sha256"
@@ -484,13 +506,10 @@ def main() -> None:
         exist_ok=True,
     )
 
-    json_path = (
-        arguments.output_directory
-        / "retrieval_seed_results.json"
-    )
-    csv_path = (
-        arguments.output_directory
-        / "retrieval_seed_results.csv"
+    json_path, csv_path = build_report_paths(
+        dataset_path=arguments.dataset,
+        split=arguments.split,
+        output_directory=arguments.output_directory,
     )
 
     json_path.write_text(

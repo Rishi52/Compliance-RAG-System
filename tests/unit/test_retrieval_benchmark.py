@@ -7,6 +7,7 @@ import pytest
 from evaluation.run_retrieval_benchmark import (
     METHODS,
     aggregate_results,
+    build_report_paths,
     extract_ranked_safeguards,
     percentile,
 )
@@ -182,3 +183,37 @@ def test_saved_report_contains_all_retrieval_methods() -> None:
             assert REQUIRED_METRIC_FIELDS <= (
                 method_result["metrics"].keys()
             )
+@pytest.mark.parametrize(
+    ("split", "expected_stem"),
+    [
+        (
+            "dev",
+            "retrieval_benchmark_dev_results",
+        ),
+        (
+            "test",
+            "retrieval_benchmark_test_results",
+        ),
+    ],
+)
+def test_report_paths_include_dataset_and_split(
+    tmp_path: Path,
+    split: str,
+    expected_stem: str,
+) -> None:
+    dataset_path = Path(
+        "evaluation/datasets/retrieval_benchmark.jsonl"
+    )
+
+    json_path, csv_path = build_report_paths(
+        dataset_path=dataset_path,
+        split=split,
+        output_directory=tmp_path,
+    )
+
+    assert json_path == (
+        tmp_path / f"{expected_stem}.json"
+    )
+    assert csv_path == (
+        tmp_path / f"{expected_stem}.csv"
+    )

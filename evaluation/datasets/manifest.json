@@ -1,14 +1,22 @@
 {
-  "dataset_name": "cis_controls_retrieval_seed",
-  "dataset_version": "0.1.0",
+  "dataset_name": "cis_controls_retrieval_benchmark",
+  "dataset_version": "0.2.0",
   "framework": "CIS Controls v8.1.2",
   "corpus_document_id": "cis-controls-v8.1.2",
   "corpus_file_sha256": "9fa609fc03235102b34122cd3317b2961066f42495b2f63346b4edcaafc2453f",
-  "question_count": 18,
-  "purpose": "Development-only retrieval benchmark with one representative question per CIS Control.",
+  "dataset_file_sha256": "aa7794e9c79a440c8deb11259ddb652c2a0bab7132d87a9b7fa79420ba00b2c0",
+  "question_count": 54,
+  "purpose": "Retrieval benchmark containing development contrast cases and a held-out test split.",
   "split_counts": {
-    "dev": 18,
-    "test": 0
+    "dev": 36,
+    "test": 18
   },
+  "category_counts": {
+    "direct": 27,
+    "paraphrase": 27,
+    "multi_safeguard": 0,
+    "unanswerable": 0
+  },
+  "test_split_policy": "Created and frozen before retrieval tuning. Do not use test results for model selection.",
   "manually_curated": true
 }
