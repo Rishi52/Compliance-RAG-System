@@ -9,7 +9,7 @@ from typing import Any
 DEFAULT_REPORT_PATH = (
     Path(__file__).resolve().parent
     / "results"
-    / "retrieval_seed_results.json"
+    / "retrieval_benchmark_dev_results.json"
 )
 
 DEFAULT_METHOD = "hybrid_reranked"

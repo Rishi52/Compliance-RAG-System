@@ -9,7 +9,7 @@ from evaluation.check_retrieval_quality import (
 )
 
 
-def test_saved_baseline_passes_quality_gate() -> None:
+def test_saved_development_report_passes_quality_gate() -> None:
     report = load_report(DEFAULT_REPORT_PATH)
     method_summary = get_method_summary(
         report,

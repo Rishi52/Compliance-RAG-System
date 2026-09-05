@@ -18,7 +18,7 @@ REPORT_PATH = (
     PROJECT_ROOT
     / "evaluation"
     / "results"
-    / "retrieval_seed_results.json"
+    / "retrieval_benchmark_dev_results.json"
 )
 
 REQUIRED_METADATA_FIELDS = {
@@ -35,6 +35,7 @@ REQUIRED_METADATA_FIELDS = {
     "vector_candidates",
     "bm25_candidates",
     "rrf_k",
+    "dataset_file_sha256",
 }
 
 REQUIRED_METRIC_FIELDS = {
