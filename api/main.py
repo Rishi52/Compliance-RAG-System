@@ -2,13 +2,17 @@ import logging
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from typing import Any
+from time import perf_counter
+from uuid import uuid4
 
 from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
+from config.logging_config import configure_logging
 from config.settings import settings
 
+configure_logging(settings.log_level)
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -178,7 +182,61 @@ def create_app(
         allow_credentials=False,
         allow_methods=["GET", "POST"],
         allow_headers=["Content-Type"],
+        expose_headers=["X-Request-ID"],
     )
+
+    @application.middleware("http")
+    async def log_http_request(request: Request, call_next):
+        request_id = str(uuid4())
+        request.state.request_id = request_id
+        started_at = perf_counter()
+
+        try:
+            response = await call_next(request)
+        except Exception:
+            duration_ms = round(
+                (perf_counter() - started_at) * 1000,
+                2,
+            )
+
+            logger.exception(
+                "HTTP request failed.",
+                extra={
+                    "request_id": request_id,
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status_code": 500,
+                    "duration_ms": duration_ms,
+                },
+            )
+            raise
+
+        duration_ms = round(
+            (perf_counter() - started_at) * 1000,
+            2,
+        )
+
+        response.headers["X-Request-ID"] = request_id
+
+        log_level = (
+            logging.ERROR
+            if response.status_code >= 500
+            else logging.INFO
+        )
+
+        logger.log(
+            log_level,
+            "HTTP request completed.",
+            extra={
+                "request_id": request_id,
+                "method": request.method,
+                "path": request.url.path,
+                "status_code": response.status_code,
+                "duration_ms": duration_ms,
+            },
+        )
+
+        return response
 
     application.include_router(router)
 

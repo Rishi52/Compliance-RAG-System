@@ -1,284 +1,335 @@
-# 🛡️ CIS Controls Compliance RAG
+# CIS Controls Compliance RAG
 
-A **Retrieval-Augmented Generation (RAG)** application built for cybersecurity compliance auditing. It allows you to ask natural language questions about **CIS Controls v8.1** and get precise, sourced answers powered by a local LLM — no data ever leaves your machine.
+A local, evidence-grounded Retrieval-Augmented Generation system for asking questions about CIS Controls v8.1.
 
-![RAG Architecture](https://img.shields.io/badge/Architecture-Hybrid%20RAG-blue?style=for-the-badge)
-![LLM](https://img.shields.io/badge/LLM-Ollama%20(Local)-green?style=for-the-badge)
-![Vector DB](https://img.shields.io/badge/VectorDB-ChromaDB-orange?style=for-the-badge)
-![Backend](https://img.shields.io/badge/Backend-FastAPI-teal?style=for-the-badge)
+The system combines dense retrieval, BM25, Reciprocal Rank Fusion, cross-encoder reranking and a local Ollama model. Answers include safeguard-level citations and page references from the supplied CIS Controls document.
 
----
+## Main features
 
-## 📌 What This Project Does
+- Local and privacy-focused generation through Ollama
+- Metadata-aware CIS safeguard extraction
+- Deterministic chunking with stable chunk identifiers
+- Dense semantic retrieval using BGE embeddings
+- Sparse retrieval using BM25
+- Reciprocal Rank Fusion
+- Cross-encoder reranking
+- Safeguard-aware context selection
+- Citation validation and automatic retry
+- Safe abstention when evidence is insufficient
+- FastAPI REST API and browser frontend
+- Liveness and readiness health checks
+- JSON request logs with request IDs and timing
+- Docker Compose deployment
+- Automated GitHub Actions CI
+- 160 automated unit and integration tests
 
-This project is a fully local, privacy-first compliance chatbot. You drop in a CIS Controls PDF, run a few scripts to process it, and then ask questions like:
+## Architecture
 
-> *"What safeguards are required for data encryption at rest?"*
-> *"Which controls apply to privileged account management?"*
-
-The system retrieves the most relevant safeguard chunks and passes them to a local LLM (via **Ollama**) to generate a concise, cited answer — complete with Control IDs, Safeguard IDs, and page references.
-
----
-
-## ✅ What Has Been Built
-
-### 🔍 Data Pipeline
-| Script | Purpose |
-|---|---|
-| `scripts/extract_safeguards.py` | Parses the CIS Controls PDF (v8.1) using `pdfplumber`, extracts every safeguard with its Control ID, Safeguard ID, name, content, and page number |
-| `scripts/extract_metadata.py` | Extracts a separate metadata index of all controls and safeguards |
-| `scripts/chunk_safeguards.py` | Validates and prepares chunks for embedding |
-| `scripts/create_vector_db.py` | Generates sentence embeddings (`BAAI/bge-small-en-v1.5`) and stores them in a persistent **ChromaDB** vector store |
-
-### 🔎 Hybrid Retrieval System (`retrieval/`)
-A multi-stage retrieval pipeline was implemented for high-accuracy results:
-
-1. **Vector Retriever** — Semantic similarity search using `SentenceTransformer` embeddings in ChromaDB (top 20 results)
-2. **BM25 Retriever** — Keyword-based sparse retrieval using `rank_bm25` (top 20 results)
-3. **Reciprocal Rank Fusion (RRF)** — Merges and re-ranks results from both retrievers using the RRF algorithm
-4. **Cross-Encoder Reranker** — Final reranking using `cross-encoder/ms-marco-MiniLM-L-6-v2` to select the top 3 most relevant chunks
-
-### 🤖 LLM Integration
-- Uses **Ollama** to run a local LLM (`llama3.2:1b` by default)
-- System prompt configured as a strict compliance auditor via `config/prompts.yaml`
-- LLM answers ONLY from provided context — no hallucination from general knowledge
-
-### 🌐 REST API (`api/`)
-- Built with **FastAPI**
-- `GET /` — Health check
-- `POST /chat` — Accepts a question, runs the full RAG pipeline, returns an answer with structured source citations (Control ID, Safeguard ID, page number)
-
-### 🖥️ Frontend (`frontend/`)
-- Vanilla HTML/CSS/JavaScript chat UI
-- Real-time chat interface with a compliance auditor bot
-- Displays answer and source references for every response
-- Styled with Inter font and Font Awesome icons
-
----
-
-## 🗂️ Project Structure
-
+```mermaid
+flowchart TD
+    Q["Compliance question"] --> H["Dense and BM25 retrieval"]
+    H --> R["RRF and cross-encoder reranking"]
+    R --> S["Safeguard-aware context selection"]
+    S --> G["Local Ollama generation"]
+    G --> V["Citation validation or abstention"]
 ```
+
+## Processing pipeline
+
+| Stage | Implementation | Output |
+|---|---|---|
+| Extraction | `scripts/extract_safeguards.py` | Structured safeguard records |
+| Chunking | `scripts/chunk_safeguards.py` | Metadata-aware text chunks |
+| Indexing | `scripts/create_vector_db.py` | Persistent ChromaDB collection |
+| Retrieval | `retrieval/` | Ranked evidence chunks |
+| Context selection | `generation/context_selector.py` | Safeguard-consistent evidence |
+| Generation | `generation/generator.py` | Cited answer or abstention |
+| API | `api/main.py` | Validated JSON response |
+
+## Retrieval flow
+
+1. The vector retriever finds semantically similar chunks.
+2. BM25 finds chunks with matching terms and safeguard IDs.
+3. Reciprocal Rank Fusion combines both rankings.
+4. A cross-encoder reranks the fused candidates.
+5. The context selector keeps evidence from the most relevant safeguard.
+6. Ollama generates an evidence-only answer.
+7. Citation validation accepts, retries or abstains.
+
+## Project structure
+
+```text
 Compliance-RAG-System/
-├── api/
-│   └── main.py              # FastAPI app — /chat endpoint
-├── config/
-│   ├── prompt_loader.py     # Loads system prompt from YAML
-│   └── prompts.yaml         # System prompt for the LLM
-├── data/
-│   ├── raw/                 # Place your CIS Controls PDF here (not in git)
-│   └── processed/           # Extracted safeguards JSON (generated)
-├── frontend/
-│   ├── index.html           # Chat UI
-│   ├── style.css            # Styles
-│   └── app.js               # Frontend logic (API calls)
-├── retrieval/
-│   ├── vector_retriever.py  # ChromaDB semantic search
-│   ├── bm25_retriever.py    # BM25 keyword search
-│   ├── hybrid_retriever.py  # Combines vector + BM25 + RRF + reranker
-│   ├── rrf.py               # Reciprocal Rank Fusion
-│   └── reranker.py          # Cross-encoder reranker
-├── scripts/
-│   ├── extract_safeguards.py    # Step 1: Extract data from PDF
-│   ├── extract_metadata.py      # Step 2: Extract metadata index
-│   ├── create_vector_db.py      # Step 3: Build ChromaDB
-│   └── ...                      # Validation & test scripts
-├── chroma_db/               # Persistent vector DB (generated, not in git)
-├── requirements.txt
-└── .gitignore
+|-- api/                  FastAPI application
+|-- config/               Settings, prompts and logging
+|-- data/
+|   |-- raw/              Source CIS PDF, excluded from Git
+|   `-- processed/        Generated safeguard data, excluded from Git
+|-- evaluation/           Retrieval evaluation utilities and datasets
+|-- frontend/             HTML, CSS and JavaScript client
+|-- generation/           Context selection and answer generation
+|-- retrieval/            Dense, BM25, RRF and reranking components
+|-- scripts/              Extraction, indexing and smoke-test commands
+|-- tests/
+|   |-- unit/             Isolated component tests
+|   `-- integration/      FastAPI lifecycle and contract tests
+|-- .github/workflows/    Continuous integration
+|-- Dockerfile            API container definition
+|-- compose.yaml          Local container orchestration
+`-- requirements.txt      Pinned Python dependencies
 ```
 
----
+## Requirements
 
-## 🚀 How to Use This Project (Setup Guide)
-
-### Prerequisites
-
-- Python 3.10 or higher
-- [Ollama](https://ollama.com/) installed and running
-- The **CIS Controls v8.1 PDF** (you must obtain this from [CIS](https://www.cisecurity.org/controls))
+- Python 3.13
+- Ollama
 - Git
+- CIS Controls v8.1 PDF
+- Docker Desktop, optional
 
----
+The CIS document and generated data are deliberately excluded from Git.
 
-### Step 1 — Clone the Repository
+## Local setup
 
-```bash
+### 1. Create the environment
+
+```powershell
 git clone https://github.com/Rishi52/Compliance-RAG-System.git
 cd Compliance-RAG-System
+
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+python -m pip install --upgrade pip
+python -m pip install -r requirements-dev.txt
 ```
 
----
+### 2. Configure the application
 
-### Step 2 — Create a Virtual Environment
-
-```bash
-python -m venv venv
-
-# Activate on Windows
-venv\Scripts\activate
-
-# Activate on macOS/Linux
-source venv/bin/activate
+```powershell
+Copy-Item ".env.example" ".env"
 ```
 
----
+Default generation configuration:
 
-### Step 3 — Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
----
-
-### Step 4 — Install Ollama and Pull a Model
-
-1. Download Ollama from [https://ollama.com/](https://ollama.com/) and install it.
-2. Pull the default model:
-
-```bash
-ollama pull llama3.2:1b
+```text
+COMPLIANCE_RAG_OLLAMA_MODEL=llama3.2:3b
+COMPLIANCE_RAG_OLLAMA_BASE_URL=http://127.0.0.1:11434
 ```
 
-3. Make sure Ollama is running (it starts automatically on most systems, or run `ollama serve`).
+### 3. Prepare Ollama
 
----
-
-### Step 5 — Add the CIS Controls PDF
-
-Place the CIS Controls PDF inside the `data/raw/` folder:
-
+```powershell
+ollama pull llama3.2:3b
+ollama list
 ```
+
+Confirm its API is available:
+
+```powershell
+Invoke-RestMethod `
+    -Uri "http://127.0.0.1:11434/api/tags"
+```
+
+### 4. Prepare the CIS data
+
+Place the PDF at:
+
+```text
 data/raw/CIS_Controls_Guide_v8.1.2_0325_v2.pdf
 ```
 
-> ⚠️ The filename must match exactly, or update the `PDF_PATH` variable in `scripts/extract_safeguards.py`.
+Run the pipeline:
 
----
-
-### Step 6 — Run the Data Pipeline
-
-```bash
-# Extract safeguards from the PDF
-python scripts/extract_safeguards.py
-
-# Build the ChromaDB vector database
-python scripts/create_vector_db.py
+```powershell
+python -m scripts.extract_safeguards
+python -m scripts.chunk_safeguards
+python -m scripts.create_vector_db
 ```
 
-You should see output like:
-```
-Extracted 153 safeguards
-Stored 153 safeguards
-```
+Expected artifacts:
 
----
-
-### Step 7 — Start the API Server
-
-```bash
-uvicorn api.main:app --reload
+```text
+data/processed/cis_safeguards.json
+data/processed/chunked_safeguards.json
+chroma_db/
 ```
 
-The API will be available at: `http://localhost:8000`
+### 5. Start the API
 
----
+```powershell
+python -m uvicorn api.main:app `
+    --host 127.0.0.1 `
+    --port 8000
+```
 
-### Step 8 — Open the Frontend
+Available endpoints:
 
-Open `frontend/index.html` in your browser directly (double-click it), or serve it with any static file server:
+- API root: `http://127.0.0.1:8000/`
+- Swagger UI: `http://127.0.0.1:8000/docs`
+- Liveness: `http://127.0.0.1:8000/health/live`
+- Readiness: `http://127.0.0.1:8000/health/ready`
 
-```bash
-# Using Python's built-in server
+### 6. Start the frontend
+
+In another terminal:
+
+```powershell
 python -m http.server 5500 --directory frontend
 ```
 
-Then visit `http://localhost:5500` and start asking compliance questions!
+Open:
 
----
-
-## 🔄 Using a Different Local LLM Model
-
-The application uses **Ollama** as its LLM backend, so switching models is very easy.
-
-### Step 1 — Pull a different model
-
-```bash
-# Examples of models you can use:
-ollama pull llama3.2:3b          # Larger, more capable Llama 3.2
-ollama pull llama3.1:8b          # Llama 3.1 8B — best quality locally
-ollama pull mistral:7b           # Mistral 7B — fast and capable
-ollama pull gemma2:2b            # Google Gemma 2 2B — very lightweight
-ollama pull phi3:mini            # Microsoft Phi-3 Mini — efficient
-ollama pull deepseek-r1:7b       # DeepSeek reasoning model
+```text
+http://127.0.0.1:5500
 ```
 
-To see all available models: [https://ollama.com/library](https://ollama.com/library)
+## API usage
 
-### Step 2 — Update `api/main.py`
+Request:
 
-Open `api/main.py` and change the `model` parameter in the `ChatOllama` call:
+```powershell
+$body = @{
+    question = "How often should the enterprise asset inventory be reviewed?"
+} | ConvertTo-Json
 
-```python
-# Line 24-27 in api/main.py
-llm = ChatOllama(
-    model="llama3.2:1b",   # <-- Change this to your preferred model
-    temperature=0
-)
+Invoke-RestMethod `
+    -Uri "http://127.0.0.1:8000/chat" `
+    -Method Post `
+    -ContentType "application/json" `
+    -Body $body
 ```
 
-**For example, to use Mistral 7B:**
-```python
-llm = ChatOllama(
-    model="mistral:7b",
-    temperature=0
-)
+Example response structure:
+
+```json
+{
+  "answer": "Review and update the inventory bi-annually, or more frequently. [S1]",
+  "sources": [
+    {
+      "source_id": "S1",
+      "chunk_id": "cis-controls-v8.1.2:1.1:001",
+      "control_id": "1",
+      "control_name": "Inventory and Control of Enterprise Assets",
+      "safeguard_id": "1.1",
+      "safeguard_name": "Establish and Maintain Detailed Enterprise Asset Inventory",
+      "page": 22
+    }
+  ],
+  "citation_valid": true,
+  "generation_attempts": 1
+}
 ```
 
-### Step 3 — Restart the server
+Every API response also contains an `X-Request-ID` header for log correlation.
 
-```bash
-uvicorn api.main:app --reload
+## Docker deployment
+
+The processed chunk file and Chroma index must already exist before starting the container.
+
+Keep Ollama running on Windows, then run:
+
+```powershell
+docker compose build
+docker compose up -d
+docker compose ps
 ```
 
-That's it! The rest of the pipeline (retrieval, reranking, prompt) stays the same.
+Verify:
 
-> **💡 Tips for choosing a model:**
-> - Use `llama3.2:1b` or `gemma2:2b` on low-RAM machines (8GB RAM)
-> - Use `llama3.1:8b` or `mistral:7b` for better answer quality (16GB+ RAM recommended)
-> - Set `temperature=0` for deterministic compliance answers
+```powershell
+Invoke-RestMethod `
+    -Uri "http://127.0.0.1:8000/health/ready"
+```
 
----
+View structured logs:
 
-## ⚙️ Configuration
+```powershell
+docker compose logs --tail=100 api
+```
 
-| File | What to Configure |
-|---|---|
-| `api/main.py` | `model=` in `ChatOllama(...)` to switch LLM |
-| `api/main.py` | `k=` in `retriever.search(...)` to change number of retrieved chunks |
-| `config/prompts.yaml` | Edit the system prompt to change the auditor's tone/style |
-| `retrieval/vector_retriever.py` | `embedding_model=` to change the embedding model |
-| `retrieval/hybrid_retriever.py` | Tune `k` values in `vector.search()` and `bm25.search()` |
-| `retrieval/reranker.py` | Change the cross-encoder model for reranking |
+Stop the service without deleting the model cache:
 
----
+```powershell
+docker compose down
+```
 
-## 🛠️ Tech Stack
+Do not use `docker compose down -v` unless you intentionally want to remove the Hugging Face cache.
 
-| Layer | Technology |
-|---|---|
-| **LLM** | Ollama (any local model) |
-| **Embeddings** | `BAAI/bge-small-en-v1.5` via SentenceTransformers |
-| **Vector Store** | ChromaDB (persistent, local) |
-| **Sparse Retrieval** | BM25 (`rank-bm25`) |
-| **Fusion** | Reciprocal Rank Fusion (RRF) |
-| **Reranking** | `cross-encoder/ms-marco-MiniLM-L-6-v2` |
-| **PDF Parsing** | `pdfplumber` |
-| **Backend API** | FastAPI + Uvicorn |
-| **Frontend** | Vanilla HTML, CSS, JavaScript |
+## Testing
 
----
+Run the complete test suite:
 
-## 📄 License
+```powershell
+python -m pytest -q
+```
 
-This project is for educational purposes. The CIS Controls document is copyrighted by the Center for Internet Security — you must obtain it independently.
+Run individual groups:
+
+```powershell
+python -m pytest tests\unit -q
+python -m pytest tests\integration -q
+```
+
+Additional checks:
+
+```powershell
+python -m compileall -q `
+    api `
+    config `
+    evaluation `
+    generation `
+    retrieval `
+    scripts `
+    tests
+
+python -m pip check
+git diff --check
+```
+
+GitHub Actions automatically executes the quality checks for pushes and pull requests.
+
+## Structured logs
+
+Application requests produce one JSON record per line:
+
+```json
+{
+  "timestamp": "2026-09-05T10:30:00+00:00",
+  "level": "INFO",
+  "logger": "api.main",
+  "message": "HTTP request completed.",
+  "request_id": "40f94514-a229-46ba-a579-a7fc76f8134e",
+  "method": "POST",
+  "path": "/chat",
+  "status_code": 200,
+  "duration_ms": 2451.72
+}
+```
+
+Question text and retrieved evidence are not written to request logs.
+
+## Privacy and data handling
+
+- Generation runs through the configured Ollama server.
+- Compliance questions are not sent to a hosted LLM.
+- The CIS PDF, processed records and Chroma database are excluded from Git.
+- Hugging Face is contacted when retrieval models must initially be downloaded.
+- Model files are cached locally or in the Docker volume.
+
+## Current limitations
+
+- The application is intended for local or controlled environments.
+- Authentication and user authorization are not currently implemented.
+- The API uses one model worker to avoid duplicate memory use.
+- Readiness verifies the retrieval index but does not prove that Ollama has the requested model loaded.
+- Generated answers should support compliance analysis, not replace professional audit judgment.
+
+## Quality status
+
+- 153 tests before observability
+- 160 tests after observability
+- Automated Python 3.13 CI
+- Dockerfile and Compose validation
+- Citation checking and safe abstention
+- No external model required during automated tests

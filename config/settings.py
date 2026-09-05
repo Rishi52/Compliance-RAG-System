@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Annotated, Any, Self
+from typing import Annotated, Any, Literal, Self
 from urllib.parse import urlsplit
 
 from pydantic import Field, field_validator, model_validator
@@ -17,6 +17,13 @@ class Settings(BaseSettings):
 
     app_name: str = "Compliance RAG"
     app_version: str = "0.2.0"
+    log_level: Literal[
+        "CRITICAL",
+        "ERROR",
+        "WARNING",
+        "INFO",
+        "DEBUG",
+    ] = "INFO"
     max_question_length: PositiveInt = 2000
     cors_origins: str = (
         "http://127.0.0.1:5500,"
@@ -75,6 +82,19 @@ class Settings(BaseSettings):
         extra="ignore",
         validate_default=True,
     )
+
+    @field_validator("log_level", mode="before")
+    @classmethod
+    def normalize_log_level(
+        cls,
+        value: Any,
+    ) -> str:
+        if not isinstance(value, str):
+            raise ValueError(
+                "Logging level must be a string."
+            )
+
+        return value.strip().upper()
 
     @field_validator(
         "app_name",

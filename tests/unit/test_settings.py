@@ -156,3 +156,14 @@ def test_invalid_ollama_url_is_rejected() -> None:
         make_settings(
             ollama_base_url="localhost:11434"
         )
+def test_log_level_is_normalized() -> None:
+    configuration = make_settings(
+        log_level="debug"
+    )
+
+    assert configuration.log_level == "DEBUG"
+
+
+def test_invalid_log_level_is_rejected() -> None:
+    with pytest.raises(ValidationError):
+        make_settings(log_level="verbose")

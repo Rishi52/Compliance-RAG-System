@@ -435,3 +435,28 @@ def test_lifespan_cleans_up_after_factory_failure() -> None:
     assert application.state.retriever is None
     assert application.state.context_selector is None
     assert application.state.generator is None
+
+def test_response_contains_request_id(client) -> None:
+    from uuid import UUID
+
+    test_client, _ = client
+
+    response = test_client.get("/health/live")
+
+    assert response.status_code == 200
+
+    request_id = response.headers["x-request-id"]
+
+    assert str(UUID(request_id)) == request_id
+
+
+def test_each_request_receives_unique_id(client) -> None:
+    test_client, _ = client
+
+    first_response = test_client.get("/health/live")
+    second_response = test_client.get("/health/live")
+
+    assert (
+        first_response.headers["x-request-id"]
+        != second_response.headers["x-request-id"]
+    )
