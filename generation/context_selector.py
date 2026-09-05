@@ -49,6 +49,11 @@ class SafeguardContextSelector:
         ] = {}
 
         for position, chunk in enumerate(chunks):
+            if not isinstance(chunk, dict):
+                raise ValueError(
+                    f"Chunk at position {position} "
+                    "is not an object."
+                )
             missing_fields = REQUIRED_CHUNK_FIELDS - chunk.keys()
 
             if missing_fields:
@@ -114,6 +119,12 @@ class SafeguardContextSelector:
             if not isinstance(metadata, dict):
                 raise ValueError(
                     "Ranked document has invalid metadata."
+                )
+
+            if "safeguard_id" not in metadata:
+                raise ValueError(
+                    "Ranked document metadata is missing "
+                    "safeguard_id."
                 )
 
             safeguard_id = str(metadata["safeguard_id"])
