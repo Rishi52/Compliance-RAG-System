@@ -23,12 +23,6 @@ from evaluation.metrics import (
     deduplicate_ids,
     evaluate_ranking,
 )
-from retrieval.bm25_retriever import BM25Retriever
-from retrieval.reranker import Reranker
-from retrieval.rrf import ReciprocalRankFusion
-from retrieval.vector_retriever import VectorRetriever
-
-
 METHODS = (
     "vector",
     "bm25",
@@ -69,6 +63,11 @@ def percentile(
     percentile_value: float,
 ) -> float:
     """Calculate a linearly interpolated percentile."""
+
+    if not 0.0 <= percentile_value <= 1.0:
+        raise ValueError(
+            "percentile_value must be between 0 and 1."
+        )
 
     if not values:
         raise ValueError(
@@ -284,6 +283,13 @@ def main() -> None:
         raise ValueError(
             "No answerable examples matched the selected split."
         )
+
+    # Import ML dependencies only when running the benchmark.
+    # Unit tests for report utilities should remain lightweight.
+    from retrieval.bm25_retriever import BM25Retriever
+    from retrieval.reranker import Reranker
+    from retrieval.rrf import ReciprocalRankFusion
+    from retrieval.vector_retriever import VectorRetriever
 
     print("Loading retrieval models...")
 
