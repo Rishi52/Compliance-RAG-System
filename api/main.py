@@ -1,19 +1,22 @@
 import logging
+from collections.abc import Callable
 from contextlib import asynccontextmanager
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
 from config.settings import settings
-from generation.context_selector import SafeguardContextSelector
-from generation.generator import ComplianceGenerator
-from retrieval.hybrid_retriever import HybridRetriever
-
 
 logger = logging.getLogger(__name__)
 
+router = APIRouter()
+
+ServiceFactory = Callable[
+    [],
+    tuple[Any, Any, Any],
+]
 
 class QuestionRequest(BaseModel):
     """Incoming compliance question."""
@@ -55,26 +58,51 @@ class ChatResponse(BaseModel):
     generation_attempts: int
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Load expensive application services once at startup."""
+def build_services() -> tuple[Any, Any, Any]:
+    """Construct production services only during API startup."""
 
-    logger.info("Loading retrieval and generation services.")
+    from generation.context_selector import (
+        SafeguardContextSelector,
+    )
+    from generation.generator import ComplianceGenerator
+    from retrieval.hybrid_retriever import HybridRetriever
 
-    app.state.retriever = HybridRetriever()
-    app.state.context_selector = SafeguardContextSelector()
-    app.state.generator = ComplianceGenerator()
-
-    logger.info("Compliance RAG services are ready.")
-
-    yield
-
-    app.state.retriever = None
-    app.state.context_selector = None
-    app.state.generator = None
+    return (
+        HybridRetriever(),
+        SafeguardContextSelector(),
+        ComplianceGenerator(),
+    )
 
 
-def create_app() -> FastAPI:
+def create_lifespan(service_factory: ServiceFactory):
+    """Create an application lifespan using the supplied services."""
+
+    @asynccontextmanager
+    async def application_lifespan(application: FastAPI):
+        logger.info(
+            "Loading retrieval and generation services."
+        )
+
+        (
+            application.state.retriever,
+            application.state.context_selector,
+            application.state.generator,
+        ) = service_factory()
+
+        logger.info("Compliance RAG services are ready.")
+
+        try:
+            yield
+        finally:
+            application.state.retriever = None
+            application.state.context_selector = None
+            application.state.generator = None
+
+    return application_lifespan
+
+def create_app(
+    service_factory: ServiceFactory = build_services,
+) -> FastAPI:
     """Create and configure the FastAPI application."""
 
     application = FastAPI(
@@ -83,7 +111,7 @@ def create_app() -> FastAPI:
         description=(
             "Evidence-grounded CIS Controls question-answering API."
         ),
-        lifespan=lifespan,
+        lifespan=create_lifespan(service_factory),
     )
 
     application.add_middleware(
@@ -94,13 +122,13 @@ def create_app() -> FastAPI:
         allow_headers=["Content-Type"],
     )
 
+    application.include_router(router)
+
     return application
 
+router = APIRouter()
 
-app = create_app()
-
-
-@app.get("/")
+@router.get("/")
 def root() -> dict[str, str]:
     return {
         "message": "Compliance RAG is running.",
@@ -108,14 +136,14 @@ def root() -> dict[str, str]:
     }
 
 
-@app.get("/health/live")
+@router.get("/health/live")
 def liveness() -> dict[str, str]:
     """Confirm that the API process is running."""
 
     return {"status": "alive"}
 
 
-@app.get("/health/ready")
+@router.get("/health/ready")
 def readiness(request: Request) -> dict[str, Any]:
     """Confirm that retrieval and generation are initialized."""
 
@@ -157,7 +185,7 @@ def readiness(request: Request) -> dict[str, Any]:
     }
 
 
-@app.post(
+@router.post(
     "/chat",
     response_model=ChatResponse,
 )
@@ -236,3 +264,4 @@ def chat(
         citation_valid=result["citation_valid"],
         generation_attempts=result["generation_attempts"],
     )
+app = create_app()
