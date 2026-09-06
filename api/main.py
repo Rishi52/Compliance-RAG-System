@@ -7,7 +7,17 @@ from uuid import uuid4
 
 from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+)
+from api.security import (
+    OUT_OF_SCOPE_RESPONSE,
+    is_compliance_question,
+    validate_question_security,
+)
 
 from config.logging_config import configure_logging
 from config.settings import settings
@@ -24,6 +34,8 @@ ServiceFactory = Callable[[], Services]
 class QuestionRequest(BaseModel):
     """Incoming compliance question."""
 
+    model_config = ConfigDict(extra="forbid")
+
     question: str = Field(
         min_length=1,
         max_length=settings.max_question_length,
@@ -37,7 +49,7 @@ class QuestionRequest(BaseModel):
         if not value:
             raise ValueError("Question cannot be empty.")
 
-        return value
+        return validate_question_security(value)
 
 
 class SourceResponse(BaseModel):
@@ -299,6 +311,18 @@ def chat(
         get_services(request)
     )
 
+    if not is_compliance_question(payload.question):
+        logger.info(
+            "Out-of-scope question safely abstained."
+        )
+
+        return ChatResponse(
+            answer=OUT_OF_SCOPE_RESPONSE,
+            sources=[],
+            citation_valid=True,
+            generation_attempts=0,
+        )
+
     try:
         ranked_documents = retriever.search(
             query=payload.question,
@@ -313,11 +337,17 @@ def chat(
             query=payload.question,
             documents=selected_documents,
         )
-    except ValueError as error:
+    except ValueError:
+        logger.warning(
+            "Compliance question was rejected during processing.",
+            exc_info=True,
+        )
+
         raise HTTPException(
             status_code=422,
-            detail=str(error),
-        ) from error
+            detail="Invalid compliance question.",
+        ) from None
+
     except Exception as error:
         logger.exception(
             "Compliance question processing failed."
