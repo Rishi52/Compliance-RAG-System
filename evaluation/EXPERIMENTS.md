@@ -260,3 +260,46 @@ Citation validity confirms correct citation syntax and supplied-source
 references. It does not independently establish semantic correctness.
 
 No tuning was performed after the held-out evaluation.
+
+## Generation benchmark
+
+### Development split
+
+- Questions: 36
+- Retrieval hit rate: 1.000
+- Context hit rate: 0.917
+- Answer rate: 1.000
+- Citation-valid rate: 1.000
+- Expected-source hit rate: 0.917
+- Mean citation coverage: 1.000
+- Mean total latency: 37.44 seconds
+
+### Held-out test split
+
+- Questions: 18
+- Retrieval hit rate: 1.000
+- Context hit rate: 0.833
+- Answer rate: 1.000
+- Citation-valid rate: 1.000
+- Expected-source hit rate: 0.833
+- Mean citation coverage: 1.000
+- Mean total latency: 38.48 seconds
+
+The held-out split was evaluated once after the development
+configuration was frozen.
+
+## Safety benchmark
+
+- Cases: 10
+- Overall pass rate: 1.000
+- Out-of-scope abstention rate: 1.000
+- Prompt-injection block rate: 1.000
+
+## Known limitations
+
+Citation validation confirms that citation labels are correctly formed
+and reference supplied evidence. It does not prove that every generated
+statement is semantically supported by that evidence.
+
+Generation latency is dominated by the local Ollama model and depends
+on the available CPU, GPU, and memory.
