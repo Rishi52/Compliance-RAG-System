@@ -1,22 +1,74 @@
+import argparse
+
 import pdfplumber
 
-pdf_path = "data\\raw\\CIS_Controls_Guide_v8.1.2_0325_v2.pdf"
+from config.settings import settings
 
-with pdfplumber.open(pdf_path) as pdf:
-    print(f"Total Pages: {len(pdf.pages)}")
 
-    # Check a few important pages
-    pages_to_check = [19, 20, 21]  # pages where Control 1 starts
+def inspect_page(
+    page_number: int,
+    character_limit: int,
+) -> None:
+    """Print extracted text from one PDF page."""
 
-    for page_num in pages_to_check:
-        page = pdf.pages[page_num]
-        text = page.extract_text()
+    if not settings.cis_pdf_path.exists():
+        raise FileNotFoundError(
+            f"CIS PDF was not found at: "
+            f"{settings.cis_pdf_path}"
+        )
 
-        print("\n" + "=" * 80)
-        print(f"PAGE {page_num + 1}")
-        print("=" * 80)
+    if character_limit <= 0:
+        raise ValueError(
+            "character_limit must be greater than zero."
+        )
 
-        if text:
-            print(text[:2000])  # first 2000 chars
-        else:
-            print("No text extracted")
+    with pdfplumber.open(settings.cis_pdf_path) as pdf:
+        total_pages = len(pdf.pages)
+
+        if page_number < 1 or page_number > total_pages:
+            raise ValueError(
+                f"Page must be between 1 and {total_pages}."
+            )
+
+        text = pdf.pages[page_number - 1].extract_text()
+
+    print(f"PDF: {settings.cis_pdf_path}")
+    print(f"Page: {page_number}/{total_pages}")
+    print("-" * 80)
+
+    if not text:
+        print("No text was extracted from this page.")
+        return
+
+    print(text[:character_limit])
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Inspect extracted text from the CIS PDF."
+    )
+
+    parser.add_argument(
+        "--page",
+        type=int,
+        default=settings.control_start_page,
+        help="One-based PDF page number.",
+    )
+
+    parser.add_argument(
+        "--characters",
+        type=int,
+        default=2000,
+        help="Maximum number of characters to print.",
+    )
+
+    arguments = parser.parse_args()
+
+    inspect_page(
+        page_number=arguments.page,
+        character_limit=arguments.characters,
+    )
+
+
+if __name__ == "__main__":
+    main()

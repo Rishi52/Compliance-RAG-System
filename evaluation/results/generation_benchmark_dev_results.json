@@ -1,0 +1,1796 @@
+{
+  "metadata": {
+    "generated_at_utc": "2026-09-05T18:49:58.724628+00:00",
+    "dataset_name": "cis_controls_retrieval_benchmark",
+    "dataset_version": "0.2.0",
+    "dataset_file_sha256": "aa7794e9c79a440c8deb11259ddb652c2a0bab7132d87a9b7fa79420ba00b2c0",
+    "corpus_file_sha256": "9fa609fc03235102b34122cd3317b2961066f42495b2f63346b4edcaafc2453f",
+    "split": "dev",
+    "limit": null,
+    "question_count": 36,
+    "python_version": "3.13.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "ollama_model": "llama3.2:3b",
+    "ollama_temperature": 0.0,
+    "final_top_k": 3,
+    "warmup_performed": true
+  },
+  "summary": {
+    "quality": {
+      "question_count": 36,
+      "retrieval_hit_rate": 1.0,
+      "context_hit_rate": 0.9166666666666666,
+      "answer_rate": 1.0,
+      "abstention_rate": 0.0,
+      "citation_valid_rate": 1.0,
+      "expected_source_hit_rate": 0.9166666666666666,
+      "mean_citation_coverage": 1.0,
+      "retry_rate": 0.0,
+      "mean_generation_attempts": 1
+    },
+    "latency": {
+      "retrieval": {
+        "mean_ms": 1676.243099998424,
+        "p95_ms": 2143.727425020188,
+        "minimum_ms": 979.700299911201,
+        "maximum_ms": 2414.1493999632075
+      },
+      "context_selection": {
+        "mean_ms": 0.02379446070537799,
+        "p95_ms": 0.041025050450116396,
+        "minimum_ms": 0.015900004655122757,
+        "maximum_ms": 0.0447999918833375
+      },
+      "generation": {
+        "mean_ms": 35766.16323057291,
+        "p95_ms": 45351.49892503978,
+        "minimum_ms": 19295.099499984644,
+        "maximum_ms": 48868.69750008918
+      },
+      "total": {
+        "mean_ms": 37442.454349990134,
+        "p95_ms": 47604.659550008364,
+        "minimum_ms": 21125.1392000122,
+        "maximum_ms": 50775.87130002212
+      }
+    }
+  },
+  "questions": [
+    {
+      "example_id": "seed-001",
+      "question": "What should an organization do when it discovers an unauthorized asset connected to its environment?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "1.2"
+      ],
+      "answer": "The organization should ensure that a process exists to address unauthorized assets on a weekly basis, which may include removing the asset from the network, denying the asset from connecting remotely, or quarantining the asset [S1]. This process should be implemented to address unauthorized assets [S1]. The specific actions taken may vary depending on the organization's choice [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:1.2:000",
+          "control_id": "1",
+          "control_name": "Inventory and Control of Enterprise Assets",
+          "safeguard_id": "1.2",
+          "safeguard_name": "Address Unauthorized Assets",
+          "page": 22
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "1.2",
+        "1.1",
+        "2.3"
+      ],
+      "selected_safeguard_ids": [
+        "1.2"
+      ],
+      "source_safeguard_ids": [
+        "1.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1730.1330000627786,
+        "context_selection": 0.03609992563724518,
+        "generation": 25405.6336999638,
+        "total": 27135.84979996085
+      }
+    },
+    {
+      "example_id": "seed-002",
+      "question": "Which safeguard requires maintaining an up-to-date inventory of authorized software?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "2.1"
+      ],
+      "answer": "The safeguard that requires maintaining an up-to-date inventory of authorized software is 2.1 - Establish and Maintain a Software Inventory [S1]. This safeguard requires establishing and maintaining a detailed inventory of all licensed software installed on enterprise assets, including software inventory documentation and review/update frequency [S1]. The inventory must be reviewed and updated bi-annually, or more frequently [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:2.1:000",
+          "control_id": "2",
+          "control_name": "Inventory and Control of Software Assets",
+          "safeguard_id": "2.1",
+          "safeguard_name": "Establish and Maintain a Software Inventory",
+          "page": 26
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "2.1",
+        "2.2",
+        "2.5"
+      ],
+      "selected_safeguard_ids": [
+        "2.1"
+      ],
+      "source_safeguard_ids": [
+        "2.1"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1286.783799994737,
+        "context_selection": 0.01750001683831215,
+        "generation": 26473.640299984254,
+        "total": 27760.462500038557
+      }
+    },
+    {
+      "example_id": "seed-003",
+      "question": "How should an enterprise ensure that information is kept only for its required retention period?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "3.4"
+      ],
+      "answer": "Retain data according to the enterprise’s documented data management process, including both minimum and maximum timelines [S1]. This ensures data is kept only for its required retention period [S1]. The safeguard 3.4 - Enforce Data Retention supports this requirement [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:3.4:000",
+          "control_id": "3",
+          "control_name": "Data Protection",
+          "safeguard_id": "3.4",
+          "safeguard_name": "Enforce Data Retention",
+          "page": 30
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "3.4",
+        "3.1",
+        "8.1"
+      ],
+      "selected_safeguard_ids": [
+        "3.4"
+      ],
+      "source_safeguard_ids": [
+        "3.4"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1830.0014999695122,
+        "context_selection": 0.017900019884109497,
+        "generation": 19295.099499984644,
+        "total": 21125.1392000122
+      }
+    },
+    {
+      "example_id": "seed-004",
+      "question": "What process should be maintained to securely configure routers, switches, firewalls, and other network infrastructure?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "4.2"
+      ],
+      "answer": "Establish and maintain a documented secure configuration process for network devices, which includes reviewing and updating documentation annually or when significant enterprise changes occur [S1]. This process ensures that network devices are properly configured to prevent unauthorized access and minimize the risk of security breaches [S1]. The process is governed by the organization to ensure consistency and adherence to security policies [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:4.2:000",
+          "control_id": "4",
+          "control_name": "Secure Configuration of Enterprise Assets and Software",
+          "safeguard_id": "4.2",
+          "safeguard_name": "Establish and Maintain a Secure Configuration Process for Network Infrastructure",
+          "page": 35
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "4.2",
+        "12.2",
+        "12.3"
+      ],
+      "selected_safeguard_ids": [
+        "4.2"
+      ],
+      "source_safeguard_ids": [
+        "4.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1803.7046000827104,
+        "context_selection": 0.02259993925690651,
+        "generation": 38922.933500027284,
+        "total": 40726.68419999536
+      }
+    },
+    {
+      "example_id": "seed-005",
+      "question": "How should an organization keep track of user, administrator, and service accounts?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "5.1"
+      ],
+      "answer": "An organization should establish and maintain an inventory of all accounts managed in the enterprise, including user, administrator, and service accounts, at a minimum [S1]. The inventory must contain the person's name, username, start/stop dates, and department [S1]. The inventory should be validated that all active accounts are authorized, on a recurring schedule at a minimum quarterly, or more frequently [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:5.1:000",
+          "control_id": "5",
+          "control_name": "Account Management",
+          "safeguard_id": "5.1",
+          "safeguard_name": "Establish and Maintain an Inventory of Accounts",
+          "page": 39
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "5.1",
+        "5.5",
+        "5.4"
+      ],
+      "selected_safeguard_ids": [
+        "5.1"
+      ],
+      "source_safeguard_ids": [
+        "5.1"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1759.5098000019789,
+        "context_selection": 0.015900004655122757,
+        "generation": 43107.40919993259,
+        "total": 44866.95549997967
+      }
+    },
+    {
+      "example_id": "seed-006",
+      "question": "What process is required before granting access rights to enterprise systems and data?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "6.1"
+      ],
+      "answer": "A documented process, preferably automated, must be established for granting access to enterprise assets upon new hire or role change of a user [S1]. This process should be followed to ensure access rights are granted securely [S1]. The process should be governed and implemented according to the organization's security policies [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:6.1:000",
+          "control_id": "6",
+          "control_name": "Access Control Management",
+          "safeguard_id": "6.1",
+          "safeguard_name": "Establish an Access Granting Process",
+          "page": 43
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "6.1",
+        "6.2",
+        "6.8"
+      ],
+      "selected_safeguard_ids": [
+        "6.1"
+      ],
+      "source_safeguard_ids": [
+        "6.1"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2309.8356999689713,
+        "context_selection": 0.021400046534836292,
+        "generation": 34310.92889991123,
+        "total": 36620.808299980126
+      }
+    },
+    {
+      "example_id": "seed-007",
+      "question": "How should internet-facing enterprise assets be checked automatically for security weaknesses?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "7.6"
+      ],
+      "answer": "Perform automated vulnerability scans of externally-exposed enterprise assets on a monthly, or more frequent, basis [S1]. This is in line with the requirement stated in Safeguard 7.6 [S1]. The frequency of scans is not specified in the provided evidence, but the safeguard recommends a more frequent basis [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:7.6:000",
+          "control_id": "7",
+          "control_name": "Continuous Vulnerability Management",
+          "safeguard_id": "7.6",
+          "safeguard_name": "Perform Automated Vulnerability Scans of Externally-Exposed Enterprise Assets",
+          "page": 48
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "7.6",
+        "7.5",
+        "14.7"
+      ],
+      "selected_safeguard_ids": [
+        "7.6"
+      ],
+      "source_safeguard_ids": [
+        "7.6"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2088.3580000372604,
+        "context_selection": 0.021999934688210487,
+        "generation": 35507.85040005576,
+        "total": 37596.25830000732
+      }
+    },
+    {
+      "example_id": "seed-008",
+      "question": "Which safeguard requires collecting audit logs from enterprise systems?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "8.2"
+      ],
+      "answer": "Safeguard 8.2 requires collecting audit logs from enterprise systems, as stated in the enterprise's audit log management process [S1]. This safeguard ensures logging is enabled across enterprise assets [S1]. The specific requirement is to collect audit logs [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:8.2:000",
+          "control_id": "8",
+          "control_name": "Audit Log Management",
+          "safeguard_id": "8.2",
+          "safeguard_name": "Collect Audit Logs",
+          "page": 50
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "8.2",
+        "8.1",
+        "8.7"
+      ],
+      "selected_safeguard_ids": [
+        "8.2"
+      ],
+      "source_safeguard_ids": [
+        "8.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1448.4182000160217,
+        "context_selection": 0.024799956008791924,
+        "generation": 30821.051300037652,
+        "total": 32269.51769995503
+      }
+    },
+    {
+      "example_id": "seed-009",
+      "question": "How should organizations control unwanted extensions installed in web browsers and email clients?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "9.4"
+      ],
+      "answer": "Restrict, either through uninstalling or disabling, any unauthorized or unnecessary browser or email client plugins, extensions, and add-on applications [S1]. This can be achieved by uninstalling or disabling extensions that are not necessary for the organization's operations [S1]. The organization should also ensure that only authorized extensions are installed and enabled [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:9.4:000",
+          "control_id": "9",
+          "control_name": "Email and Web Browser Protections",
+          "safeguard_id": "9.4",
+          "safeguard_name": "Restrict Unnecessary or Unauthorized Browser and Email Client Extensions",
+          "page": 55
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "9.4",
+        "9.1",
+        "9.6"
+      ],
+      "selected_safeguard_ids": [
+        "9.4"
+      ],
+      "source_safeguard_ids": [
+        "9.4"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1259.7670999821275,
+        "context_selection": 0.03920006565749645,
+        "generation": 36142.873400007375,
+        "total": 37402.70299999975
+      }
+    },
+    {
+      "example_id": "seed-010",
+      "question": "What protection should be deployed and maintained to detect malicious software on enterprise assets?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "10.1"
+      ],
+      "answer": "Deploy and maintain anti-malware software on all enterprise assets [S1]. This safeguard is directly related to detecting malicious software on enterprise assets [S1]. The control and safeguard are explicitly stated as \"Deploy and Maintain Anti-Malware Software\" [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:10.1:000",
+          "control_id": "10",
+          "control_name": "Malware Defenses",
+          "safeguard_id": "10.1",
+          "safeguard_name": "Deploy and Maintain Anti-Malware Software",
+          "page": 58
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "10.1",
+        "13.2",
+        "9.3"
+      ],
+      "selected_safeguard_ids": [
+        "10.1"
+      ],
+      "source_safeguard_ids": [
+        "10.1"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1798.2272999361157,
+        "context_selection": 0.017000013031065464,
+        "generation": 30762.214800110087,
+        "total": 32560.475699952804
+      }
+    },
+    {
+      "example_id": "seed-011",
+      "question": "What documented process should an organization maintain for restoring data following an incident?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "11.1"
+      ],
+      "answer": "An organization should maintain a documented enterprise process for reporting security incidents, including the reporting timeframe, personnel to report to, mechanism for reporting, and minimum information to be reported, and review it annually or when significant enterprise changes occur [S1]. This process should be publicly available to all workforce members [S1]. The process should be established and maintained by the workforce to report security incidents [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:17.3:000",
+          "control_id": "17",
+          "control_name": "Incident Response Management",
+          "safeguard_id": "17.3",
+          "safeguard_name": "Establish and Maintain an Enterprise Process for Reporting Incidents",
+          "page": 90
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": false,
+      "expected_source_hit": false,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "17.3",
+        "17.4",
+        "11.1"
+      ],
+      "selected_safeguard_ids": [
+        "17.3"
+      ],
+      "source_safeguard_ids": [
+        "17.3"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1374.1200000513345,
+        "context_selection": 0.018200022168457508,
+        "generation": 42604.436699999496,
+        "total": 43978.59509999398
+      }
+    },
+    {
+      "example_id": "seed-012",
+      "question": "What network protections should remote devices use when connecting to enterprise resources?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "12.7"
+      ],
+      "answer": "Remote devices should utilize a VPN and authenticate to an enterprise's AAA infrastructure prior to accessing enterprise resources [S1]. This ensures secure connections and protects enterprise resources [S1]. Remote devices must require users to authenticate to the VPN and authentication services before accessing enterprise resources [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:12.7:000",
+          "control_id": "12",
+          "control_name": "Network Infrastructure Management",
+          "safeguard_id": "12.7",
+          "safeguard_name": "Ensure Remote Devices Utilize a VPN and are Connecting to an Enterprise’s AAA Infrastructure",
+          "page": 66
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "12.7",
+        "13.5",
+        "14.8"
+      ],
+      "selected_safeguard_ids": [
+        "12.7"
+      ],
+      "source_safeguard_ids": [
+        "12.7"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1950.7834000978619,
+        "context_selection": 0.02889998722821474,
+        "generation": 31509.996699984185,
+        "total": 33460.839799954556
+      }
+    },
+    {
+      "example_id": "seed-013",
+      "question": "How should security alerts produced by different systems be managed in one central location?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "13.1"
+      ],
+      "answer": "Security alerts from different systems should be managed in a central location, such as a Security Information and Event Management (SIEM) system or a log analytics platform, to facilitate log correlation and analysis [S1]. This ensures that security-relevant alerts are correlated and analyzed across the enterprise [S1]. A SIEM or log analytics platform configured with vendor-defined event correlation alerts satisfies this requirement [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:13.1:000",
+          "control_id": "13",
+          "control_name": "Network Monitoring and Defense",
+          "safeguard_id": "13.1",
+          "safeguard_name": "Centralize Security Event Alerting",
+          "page": 68
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "13.1",
+        "16.8",
+        "13.11"
+      ],
+      "selected_safeguard_ids": [
+        "13.1"
+      ],
+      "source_safeguard_ids": [
+        "13.1"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1805.3851999575272,
+        "context_selection": 0.020700041204690933,
+        "generation": 42580.90880000964,
+        "total": 44386.338399956
+      }
+    },
+    {
+      "example_id": "seed-014",
+      "question": "What training helps workforce members recognize and report possible security incidents?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "14.6"
+      ],
+      "answer": "Training on recognizing and reporting security incidents is required to help workforce members identify and report potential security incidents [S1]. This training is part of Control 14: Security Awareness and Skills Training [S1]. The specific safeguard 14.6 outlines the requirement for this training [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:14.6:000",
+          "control_id": "14",
+          "control_name": "Security Awareness and Skills Training",
+          "safeguard_id": "14.6",
+          "safeguard_name": "Train Workforce Members on Recognizing and Reporting Security Incidents",
+          "page": 74
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "14.6",
+        "14.2",
+        "14.7"
+      ],
+      "selected_safeguard_ids": [
+        "14.6"
+      ],
+      "source_safeguard_ids": [
+        "14.6"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 979.700299911201,
+        "context_selection": 0.0447999918833375,
+        "generation": 32097.552600083873,
+        "total": 33077.32049992774
+      }
+    },
+    {
+      "example_id": "seed-015",
+      "question": "How should an enterprise keep track of the external service providers on which it relies?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "15.1"
+      ],
+      "answer": "An enterprise should establish and maintain an inventory of service providers, listing all known service providers, including classification(s), and designating an enterprise contact for each service provider [S1]. The inventory should be reviewed and updated annually, or when significant enterprise changes occur that could impact this safeguard [S1]. This inventory serves as a critical component of the Service Provider Management control [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:15.1:000",
+          "control_id": "15",
+          "control_name": "Service Provider Management",
+          "safeguard_id": "15.1",
+          "safeguard_name": "Establish and Maintain an Inventory of Service Providers",
+          "page": 78
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "15.1",
+        "15.6",
+        "3.8"
+      ],
+      "selected_safeguard_ids": [
+        "15.1"
+      ],
+      "source_safeguard_ids": [
+        "15.1"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1630.3329999791458,
+        "context_selection": 0.021000043489038944,
+        "generation": 41030.29779996723,
+        "total": 42660.67510005087
+      }
+    },
+    {
+      "example_id": "seed-016",
+      "question": "What process should allow external parties to report software vulnerabilities and ensure those reports are addressed?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "16.2"
+      ],
+      "answer": "Establish and maintain a process to accept and address reports of software vulnerabilities, including providing a means for external entities to report [S2]. This process should include a vulnerability handling policy, responsible party for handling vulnerability reports, and a process for intake, assignment, remediation, and remediation testing [S2]. The process should also use a vulnerability tracking system that includes severity ratings and metrics [S2].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:16.2:000",
+          "control_id": "16",
+          "control_name": "Application Software Security",
+          "safeguard_id": "16.2",
+          "safeguard_name": "Establish and Maintain a Process to Accept and Address Software Vulnerabilities",
+          "page": 84
+        },
+        {
+          "source_id": "S2",
+          "chunk_id": "cis-controls-v8.1.2:16.2:001",
+          "control_id": "16",
+          "control_name": "Application Software Security",
+          "safeguard_id": "16.2",
+          "safeguard_name": "Establish and Maintain a Process to Accept and Address Software Vulnerabilities",
+          "page": 84
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "16.2",
+        "16.6"
+      ],
+      "selected_safeguard_ids": [
+        "16.2"
+      ],
+      "source_safeguard_ids": [
+        "16.2"
+      ],
+      "source_count": 2,
+      "latency_ms": {
+        "retrieval": 1769.9570999247953,
+        "context_selection": 0.0271000899374485,
+        "generation": 48409.079500008374,
+        "total": 50179.086299962364
+      }
+    },
+    {
+      "example_id": "seed-017",
+      "question": "What contact details should be kept current so people know where to report a security incident?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "17.2"
+      ],
+      "answer": "Maintain contact information for parties that need to be informed of security incidents, including internal staff, service providers, law enforcement, and relevant stakeholders [S1]. This includes verifying contacts annually to ensure that information is up-to-date [S1]. Contacts may include cyber insurance providers, Information Sharing and Analysis Center (ISAC) partners, or other stakeholders [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:17.2:000",
+          "control_id": "17",
+          "control_name": "Incident Response Management",
+          "safeguard_id": "17.2",
+          "safeguard_name": "Establish and Maintain Contact Information for Reporting Security Incidents",
+          "page": 90
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "17.2",
+        "17.6",
+        "17.3"
+      ],
+      "selected_safeguard_ids": [
+        "17.2"
+      ],
+      "source_safeguard_ids": [
+        "17.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1323.2110999524593,
+        "context_selection": 0.021700048819184303,
+        "generation": 40461.33219997864,
+        "total": 41784.589100047015
+      }
+    },
+    {
+      "example_id": "seed-018",
+      "question": "Which safeguard requires periodically testing the organization’s own environment through internal penetration tests?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "18.5"
+      ],
+      "answer": "The safeguard that requires periodically testing the organization's own environment through internal penetration tests is not explicitly stated in the evidence [S1]. However, Safeguard 18.2 requires external penetration testing, which may include enterprise and environmental reconnaissance, but does not explicitly mention internal testing [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:18.2:000",
+          "control_id": "18",
+          "control_name": "Penetration Testing",
+          "safeguard_id": "18.2",
+          "safeguard_name": "Perform Periodic External Penetration Tests",
+          "page": 95
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": false,
+      "expected_source_hit": false,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "18.2",
+        "18.5",
+        "18.1"
+      ],
+      "selected_safeguard_ids": [
+        "18.2"
+      ],
+      "source_safeguard_ids": [
+        "18.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1857.0977000053972,
+        "context_selection": 0.023799948394298553,
+        "generation": 33872.9460000759,
+        "total": 35730.09729990736
+      }
+    },
+    {
+      "example_id": "dev-019",
+      "question": "Which safeguard uses DHCP server or IP address management logs to update the enterprise asset inventory?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "1.4"
+      ],
+      "answer": "Use DHCP logging on all DHCP servers or Internet Protocol (IP) address management tools to update the enterprise's asset inventory, and review and use logs to update the enterprise's asset inventory weekly, or more frequently [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:1.4:000",
+          "control_id": "1",
+          "control_name": "Inventory and Control of Enterprise Assets",
+          "safeguard_id": "1.4",
+          "safeguard_name": "Use Dynamic Host Configuration Protocol (DHCP) Logging to Update Enterprise Asset Inventory",
+          "page": 23
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "1.4",
+        "1.5",
+        "8.1"
+      ],
+      "selected_safeguard_ids": [
+        "1.4"
+      ],
+      "source_safeguard_ids": [
+        "1.4"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1675.1371999271214,
+        "context_selection": 0.02180004958063364,
+        "generation": 30679.401899920776,
+        "total": 32354.587299982086
+      }
+    },
+    {
+      "example_id": "dev-020",
+      "question": "What should an enterprise verify before software can remain designated as authorized when vendor support changes?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "2.2"
+      ],
+      "answer": "An enterprise should verify software support at least monthly, or more frequently, before software can remain designated as authorized when vendor support changes [S1]. If software is unsupported, an exception detailing mitigating controls and residual risk acceptance must be documented [S1]. Designating unsupported software without exception documentation results in the software being designated as unauthorized [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:2.2:000",
+          "control_id": "2",
+          "control_name": "Inventory and Control of Software Assets",
+          "safeguard_id": "2.2",
+          "safeguard_name": "Ensure Authorized Software is Currently Supported",
+          "page": 26
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "2.2",
+        "16.2",
+        "2.5"
+      ],
+      "selected_safeguard_ids": [
+        "2.2"
+      ],
+      "source_safeguard_ids": [
+        "2.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1841.0915000131354,
+        "context_selection": 0.0198000343516469,
+        "generation": 39465.1118000038,
+        "total": 41306.24619999435
+      }
+    },
+    {
+      "example_id": "dev-021",
+      "question": "How should an enterprise dispose of data according to its documented data management process?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "3.5"
+      ],
+      "answer": "An enterprise should dispose of data according to its documented data management process, as outlined in the enterprise's documented data management process [S1]. The disposal process and method should be commensurate with the data sensitivity [S1]. The disposal process is also required by CIS Controls v8.1.2 Control 3: Data Protection [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:3.5:000",
+          "control_id": "3",
+          "control_name": "Data Protection",
+          "safeguard_id": "3.5",
+          "safeguard_name": "Securely Dispose of Data",
+          "page": 30
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "3.5",
+        "3.4",
+        "3.1"
+      ],
+      "selected_safeguard_ids": [
+        "3.5"
+      ],
+      "source_safeguard_ids": [
+        "3.5"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1970.0621000956744,
+        "context_selection": 0.017700018361210823,
+        "generation": 36818.76210006885,
+        "total": 38788.86269999202
+      }
+    },
+    {
+      "example_id": "dev-022",
+      "question": "What documented process defines secure configurations for enterprise assets and software?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "4.1"
+      ],
+      "answer": "The documented process that defines secure configurations for enterprise assets and software is established and maintained through a secure configuration process, which includes documenting secure configurations for enterprise assets and software, reviewed and updated annually or when significant enterprise changes occur [S1]. This process governs the security function of documentation, ensuring it meets the requirements of IG1, IG2, and IG3 [S1]. The process is outlined in Control 4: Secure Configuration of Enterprise Assets and Software [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:4.1:000",
+          "control_id": "4",
+          "control_name": "Secure Configuration of Enterprise Assets and Software",
+          "safeguard_id": "4.1",
+          "safeguard_name": "Establish and Maintain a Secure Configuration Process",
+          "page": 35
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "4.1",
+        "4.2",
+        "4.6"
+      ],
+      "selected_safeguard_ids": [
+        "4.1"
+      ],
+      "source_safeguard_ids": [
+        "4.1"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1907.1297999471426,
+        "context_selection": 0.02110004425048828,
+        "generation": 48868.69750008918,
+        "total": 50775.87130002212
+      }
+    },
+    {
+      "example_id": "dev-023",
+      "question": "After how many days of inactivity should a dormant account be disabled or deleted, where supported?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "5.3"
+      ],
+      "answer": "A dormant account should be disabled or deleted after a period of 45 days of inactivity, where supported [S1]. This is stated in Control 5: Account Management, Safeguard 5.3: Disable Dormant Accounts [S1]. The specific time frame is not explicitly stated in the provided evidence, but the supported time frame is 45 days [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:5.3:000",
+          "control_id": "5",
+          "control_name": "Account Management",
+          "safeguard_id": "5.3",
+          "safeguard_name": "Disable Dormant Accounts",
+          "page": 40
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "5.3",
+        "4.3",
+        "6.2"
+      ],
+      "selected_safeguard_ids": [
+        "5.3"
+      ],
+      "source_safeguard_ids": [
+        "5.3"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1340.0828000158072,
+        "context_selection": 0.017000013031065464,
+        "generation": 37941.75770005677,
+        "total": 39281.87569999136
+      }
+    },
+    {
+      "example_id": "dev-024",
+      "question": "What process should remove a person's access immediately after termination or a significant role change?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "6.2"
+      ],
+      "answer": "Establish an automated process to revoke access to enterprise assets through disabling accounts immediately upon termination, rights revocation, or role change of a user [S1]. Disabling accounts, instead of deleting accounts, may be necessary to preserve audit trails [S1]. This process should be followed to ensure immediate removal of access upon change [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:6.2:000",
+          "control_id": "6",
+          "control_name": "Access Control Management",
+          "safeguard_id": "6.2",
+          "safeguard_name": "Establish an Access Revoking Process",
+          "page": 43
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "6.2",
+        "6.1",
+        "17.4"
+      ],
+      "selected_safeguard_ids": [
+        "6.2"
+      ],
+      "source_safeguard_ids": [
+        "6.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1315.0208999868482,
+        "context_selection": 0.022500054910779,
+        "generation": 38064.741800073534,
+        "total": 39379.80790005531
+      }
+    },
+    {
+      "example_id": "dev-025",
+      "question": "How frequently should automated vulnerability scans be performed against internal enterprise assets?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "7.5"
+      ],
+      "answer": "Automated vulnerability scans should be performed on a quarterly, or more frequent, basis [S1]. Conduct both authenticated and unauthenticated scans [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:7.5:000",
+          "control_id": "7",
+          "control_name": "Continuous Vulnerability Management",
+          "safeguard_id": "7.5",
+          "safeguard_name": "Perform Automated Vulnerability Scans of Internal Enterprise Assets",
+          "page": 48
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "7.5",
+        "7.6",
+        "7.4"
+      ],
+      "selected_safeguard_ids": [
+        "7.5"
+      ],
+      "source_safeguard_ids": [
+        "7.5"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1543.6823000200093,
+        "context_selection": 0.024099950678646564,
+        "generation": 23290.779300034046,
+        "total": 24834.51000007335
+      }
+    },
+    {
+      "example_id": "dev-026",
+      "question": "What safeguard ensures log destinations have enough storage to satisfy the audit log management process?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "8.3"
+      ],
+      "answer": "Ensure that logging destinations maintain adequate storage to comply with the enterprise’s audit log management process, as stated in Safeguard 8.3 - Ensure Adequate Audit Log Storage [S1]. This safeguard directly addresses the requirement for log destinations to have enough storage to satisfy the audit log management process [S1]. The control, Control: 8 - Audit Log Management, supports this safeguard [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:8.3:000",
+          "control_id": "8",
+          "control_name": "Audit Log Management",
+          "safeguard_id": "8.3",
+          "safeguard_name": "Ensure Adequate Audit Log Storage",
+          "page": 50
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "8.3",
+        "8.2",
+        "8.1"
+      ],
+      "selected_safeguard_ids": [
+        "8.3"
+      ],
+      "source_safeguard_ids": [
+        "8.3"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1523.132599890232,
+        "context_selection": 0.024900073185563087,
+        "generation": 39525.76109999791,
+        "total": 41048.9439999219
+      }
+    },
+    {
+      "example_id": "dev-027",
+      "question": "What service should end-user devices use to block connections to known malicious domains?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "9.2"
+      ],
+      "answer": "Use DNS filtering services on all end-user devices to block access to known malicious domains [S1]. This safeguard is part of Control 9: Email and Web Browser Protections [S1]. The specific safeguard 9.2: Use DNS Filtering Services [S1] outlines this requirement.",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:9.2:000",
+          "control_id": "9",
+          "control_name": "Email and Web Browser Protections",
+          "safeguard_id": "9.2",
+          "safeguard_name": "Use DNS Filtering Services",
+          "page": 55
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "9.2",
+        "9.3",
+        "4.5"
+      ],
+      "selected_safeguard_ids": [
+        "9.2"
+      ],
+      "source_safeguard_ids": [
+        "9.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1826.2623000191525,
+        "context_selection": 0.04409998655319214,
+        "generation": 32495.473299990408,
+        "total": 34321.807499974966
+      }
+    },
+    {
+      "example_id": "dev-028",
+      "question": "How should malware-detection signature files stay current across enterprise assets?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "10.2"
+      ],
+      "answer": "Configure automatic updates for anti-malware signature files on all enterprise assets [S1]. This ensures that malware-detection signature files stay current across enterprise assets [S1]. The safeguard 10.2 requires automatic updates for anti-malware signature files [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:10.2:000",
+          "control_id": "10",
+          "control_name": "Malware Defenses",
+          "safeguard_id": "10.2",
+          "safeguard_name": "Configure Automatic Anti-Malware Signature Updates",
+          "page": 58
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "10.2",
+        "10.1",
+        "8.9"
+      ],
+      "selected_safeguard_ids": [
+        "10.2"
+      ],
+      "source_safeguard_ids": [
+        "10.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1859.7216999623924,
+        "context_selection": 0.01650000922381878,
+        "generation": 30955.627399962395,
+        "total": 32815.38270006422
+      }
+    },
+    {
+      "example_id": "dev-029",
+      "question": "How frequently should automated backups of in-scope enterprise assets run?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "11.2"
+      ],
+      "answer": "Automated backups of in-scope enterprise assets should run weekly, or more frequently based on the sensitivity of the data [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:11.2:000",
+          "control_id": "11",
+          "control_name": "Data Recovery",
+          "safeguard_id": "11.2",
+          "safeguard_name": "Perform Automated Backups",
+          "page": 61
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "11.2",
+        "11.5",
+        "7.6"
+      ],
+      "selected_safeguard_ids": [
+        "11.2"
+      ],
+      "source_safeguard_ids": [
+        "11.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1629.531200043857,
+        "context_selection": 0.02150004729628563,
+        "generation": 22000.907800043933,
+        "total": 23630.479600047693
+      }
+    },
+    {
+      "example_id": "dev-030",
+      "question": "What network design should account for segmentation, least privilege, and availability?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "12.2"
+      ],
+      "answer": "A secure network architecture must address segmentation, least privilege, and availability, at a minimum [S1]. This includes implementing design components such as documentation, policy, and design components [S1]. A secure network architecture must be established and maintained to ensure the security of the network [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:12.2:000",
+          "control_id": "12",
+          "control_name": "Network Infrastructure Management",
+          "safeguard_id": "12.2",
+          "safeguard_name": "Establish and Maintain a Secure Network Architecture",
+          "page": 65
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "12.2",
+        "16.10",
+        "12.8"
+      ],
+      "selected_safeguard_ids": [
+        "12.2"
+      ],
+      "source_safeguard_ids": [
+        "12.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1339.368600049056,
+        "context_selection": 0.017200014553964138,
+        "generation": 32346.80830000434,
+        "total": 33686.21069996152
+      }
+    },
+    {
+      "example_id": "dev-031",
+      "question": "Which safeguard deploys intrusion detection directly on endpoint or host assets?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "13.2"
+      ],
+      "answer": "Deploy a host-based intrusion prevention solution on enterprise assets, where appropriate and/or supported, as an example implementation includes use of an Endpoint Detection and Response (EDR) client or host-based IPS agent [S1]. This safeguard directly deploys intrusion detection on endpoint or host assets [S1]. Safeguard 13.7 is the specific safeguard that meets this requirement [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:13.7:000",
+          "control_id": "13",
+          "control_name": "Network Monitoring and Defense",
+          "safeguard_id": "13.7",
+          "safeguard_name": "Deploy a Host-Based Intrusion Prevention Solution",
+          "page": 70
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": false,
+      "expected_source_hit": false,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "13.7",
+        "13.2",
+        "13.3"
+      ],
+      "selected_safeguard_ids": [
+        "13.7"
+      ],
+      "source_safeguard_ids": [
+        "13.7"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1559.5529000274837,
+        "context_selection": 0.017600017599761486,
+        "generation": 38238.949300022796,
+        "total": 39798.53799997363
+      }
+    },
+    {
+      "example_id": "dev-032",
+      "question": "What training prepares employees to recognize phishing, pretexting, tailgating, and business email compromise?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "14.2"
+      ],
+      "answer": "Training prepares employees to recognize phishing, pretexting, tailgating, and business email compromise through Security Awareness and Skills Training, specifically by training workforce members to recognize social engineering attacks, such as these threats [S1]. This training is outlined in Control 14 and Safeguard 14.2 [S1]. The training covers attacks like phishing, business email compromise (BEC), pretexting, and tailgating [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:14.2:000",
+          "control_id": "14",
+          "control_name": "Security Awareness and Skills Training",
+          "safeguard_id": "14.2",
+          "safeguard_name": "Train Workforce Members to Recognize Social Engineering Attacks",
+          "page": 73
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "14.2",
+        "14.6",
+        "14.7"
+      ],
+      "selected_safeguard_ids": [
+        "14.2"
+      ],
+      "source_safeguard_ids": [
+        "14.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1274.357600021176,
+        "context_selection": 0.016700010746717453,
+        "generation": 40762.802300043404,
+        "total": 42037.19279996585
+      }
+    },
+    {
+      "example_id": "dev-033",
+      "question": "What policy should cover service-provider classification, inventory, assessment, monitoring, and decommissioning?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "15.2"
+      ],
+      "answer": "A service provider management policy should cover service-provider classification, inventory, assessment, monitoring, and decommissioning [S1]. The policy should be reviewed and updated annually, or when significant enterprise changes occur [S1]. The policy addresses the classification, inventory, assessment, monitoring, and decommissioning of service providers [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:15.2:000",
+          "control_id": "15",
+          "control_name": "Service Provider Management",
+          "safeguard_id": "15.2",
+          "safeguard_name": "Establish and Maintain a Service Provider Management Policy",
+          "page": 78
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "15.2",
+        "15.5",
+        "15.6"
+      ],
+      "selected_safeguard_ids": [
+        "15.2"
+      ],
+      "source_safeguard_ids": [
+        "15.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1632.9594999551773,
+        "context_selection": 0.017400016076862812,
+        "generation": 39206.9997000508,
+        "total": 40840.0012999773
+      }
+    },
+    {
+      "example_id": "dev-034",
+      "question": "How should discovered application vulnerabilities be prioritized for remediation?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "16.6"
+      ],
+      "answer": "Prioritize remediation of discovered application vulnerabilities based on their severity ratings, which facilitate a systematic way of triaging vulnerabilities and improve risk management [S1]. The severity rating system and process should be reviewed and updated annually [S1]. A minimum level of security acceptability should be set for releasing code or applications [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:16.6:000",
+          "control_id": "16",
+          "control_name": "Application Software Security",
+          "safeguard_id": "16.6",
+          "safeguard_name": "Establish and Maintain a Severity Rating System and Process for Application Vulnerabilities",
+          "page": 85
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "16.6",
+        "18.3",
+        "16.2"
+      ],
+      "selected_safeguard_ids": [
+        "16.6"
+      ],
+      "source_safeguard_ids": [
+        "16.6"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2031.4938999945298,
+        "context_selection": 0.04000007174909115,
+        "generation": 41687.95719998889,
+        "total": 43719.528699992225
+      }
+    },
+    {
+      "example_id": "dev-035",
+      "question": "What documented enterprise process tells the workforce how and when to report security incidents?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "17.3"
+      ],
+      "answer": "The documented enterprise process that tells the workforce how and when to report security incidents is publicly available to all of the workforce and includes reporting timeframe, personnel to report to, mechanism for reporting, and minimum information to be reported [S1]. The process must be reviewed annually or when significant enterprise changes occur [S1]. The process is part of Control 17: Incident Response Management [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:17.3:000",
+          "control_id": "17",
+          "control_name": "Incident Response Management",
+          "safeguard_id": "17.3",
+          "safeguard_name": "Establish and Maintain an Enterprise Process for Reporting Incidents",
+          "page": 90
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "17.3",
+        "17.4",
+        "17.2"
+      ],
+      "selected_safeguard_ids": [
+        "17.3"
+      ],
+      "source_safeguard_ids": [
+        "17.3"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 2414.1493999632075,
+        "context_selection": 0.028000096790492535,
+        "generation": 44332.305400050245,
+        "total": 46746.5173000237
+      }
+    },
+    {
+      "example_id": "dev-036",
+      "question": "Which penetration tests examine the enterprise from an outside perspective and must occur at least annually?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "18.2"
+      ],
+      "answer": "External penetration testing must occur at least annually, including enterprise and environmental reconnaissance to detect exploitable information [S1]. The testing requires specialized skills and experience and must be conducted through a qualified party [S1]. Penetration testing is a critical component of the enterprise's network security function [S1].",
+      "sources": [
+        {
+          "source_id": "S1",
+          "chunk_id": "cis-controls-v8.1.2:18.2:000",
+          "control_id": "18",
+          "control_name": "Penetration Testing",
+          "safeguard_id": "18.2",
+          "safeguard_name": "Perform Periodic External Penetration Tests",
+          "page": 95
+        }
+      ],
+      "validation_error": null,
+      "answered": true,
+      "abstained": false,
+      "citation_valid": true,
+      "citation_coverage": 1.0,
+      "retrieval_hit": true,
+      "context_hit": true,
+      "expected_source_hit": true,
+      "generation_attempts": 1,
+      "ranked_safeguard_ids": [
+        "18.2",
+        "18.5",
+        "18.3"
+      ],
+      "selected_safeguard_ids": [
+        "18.2"
+      ],
+      "source_safeguard_ids": [
+        "18.2"
+      ],
+      "source_count": 1,
+      "latency_ms": {
+        "retrieval": 1656.6885000793263,
+        "context_selection": 0.028099981136620045,
+        "generation": 37582.84710010048,
+        "total": 39239.597099949606
+      }
+    }
+  ]
+}

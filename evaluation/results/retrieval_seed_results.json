@@ -1,0 +1,2215 @@
+{
+  "metadata": {
+    "generated_at_utc": "2026-09-03T16:04:17.112738+00:00",
+    "dataset_name": "cis_controls_retrieval_seed",
+    "dataset_version": "0.1.0",
+    "split": "dev",
+    "corpus_file_sha256": "9fa609fc03235102b34122cd3317b2961066f42495b2f63346b4edcaafc2453f",
+    "question_count": 18,
+    "python_version": "3.13.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "vector_candidates": 20,
+    "bm25_candidates": 20,
+    "rrf_k": 60
+  },
+  "summary": {
+    "vector": {
+      "question_count": 18,
+      "recall@1": 0.6666666666666666,
+      "hit_rate@1": 0.6666666666666666,
+      "recall@3": 0.9444444444444444,
+      "hit_rate@3": 0.9444444444444444,
+      "recall@5": 0.9444444444444444,
+      "hit_rate@5": 0.9444444444444444,
+      "mrr@5": 0.7962962962962963,
+      "ndcg@5": 0.8346510563492128,
+      "mean_latency_ms": 46.35219442166595,
+      "p95_latency_ms": 57.67185995937325
+    },
+    "bm25": {
+      "question_count": 18,
+      "recall@1": 0.3333333333333333,
+      "hit_rate@1": 0.3333333333333333,
+      "recall@3": 0.6111111111111112,
+      "hit_rate@3": 0.6111111111111112,
+      "recall@5": 0.6111111111111112,
+      "hit_rate@5": 0.6111111111111112,
+      "mrr@5": 0.4444444444444444,
+      "ndcg@5": 0.48676997261905086,
+      "mean_latency_ms": 1.292155551103254,
+      "p95_latency_ms": 1.9769850303418928
+    },
+    "rrf": {
+      "question_count": 18,
+      "recall@1": 0.6111111111111112,
+      "hit_rate@1": 0.6111111111111112,
+      "recall@3": 0.7777777777777778,
+      "hit_rate@3": 0.7777777777777778,
+      "recall@5": 0.8888888888888888,
+      "hit_rate@5": 0.8888888888888888,
+      "mrr@5": 0.7129629629629629,
+      "ndcg@5": 0.7568451457383167,
+      "mean_latency_ms": 47.842683315846244,
+      "p95_latency_ms": 59.050405048765235
+    },
+    "hybrid_reranked": {
+      "question_count": 18,
+      "recall@1": 0.8888888888888888,
+      "hit_rate@1": 0.8888888888888888,
+      "recall@3": 1.0,
+      "hit_rate@3": 1.0,
+      "recall@5": 1.0,
+      "hit_rate@5": 1.0,
+      "mrr@5": 0.9351851851851852,
+      "ndcg@5": 0.9517183196428588,
+      "mean_latency_ms": 1359.1712666416747,
+      "p95_latency_ms": 1596.8307599658147
+    }
+  },
+  "questions": [
+    {
+      "example_id": "seed-001",
+      "question": "What should an organization do when it discovers an unauthorized asset connected to its environment?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "1.2"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "1.2",
+            "2.3",
+            "2.2",
+            "7.5",
+            "1.5"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:1.2:000",
+            "cis-controls-v8.1.2:2.3:000",
+            "cis-controls-v8.1.2:2.2:000",
+            "cis-controls-v8.1.2:7.5:000",
+            "cis-controls-v8.1.2:1.5:000"
+          ],
+          "latency_ms": 32.87859994452447,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "1.1",
+            "1.3",
+            "5.1",
+            "15.1",
+            "14.7"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:1.1:000",
+            "cis-controls-v8.1.2:1.3:000",
+            "cis-controls-v8.1.2:1.1:001",
+            "cis-controls-v8.1.2:5.1:000",
+            "cis-controls-v8.1.2:15.1:000"
+          ],
+          "latency_ms": 0.7689000340178609,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "1.1",
+            "1.2",
+            "2.2",
+            "1.3",
+            "2.3"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:1.1:000",
+            "cis-controls-v8.1.2:1.2:000",
+            "cis-controls-v8.1.2:2.2:000",
+            "cis-controls-v8.1.2:1.3:000",
+            "cis-controls-v8.1.2:2.3:000"
+          ],
+          "latency_ms": 33.7647000560537,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "1.2",
+            "1.1",
+            "2.3",
+            "1.3",
+            "1.5"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:1.2:000",
+            "cis-controls-v8.1.2:1.1:001",
+            "cis-controls-v8.1.2:2.3:000",
+            "cis-controls-v8.1.2:1.3:000",
+            "cis-controls-v8.1.2:1.5:000"
+          ],
+          "latency_ms": 1279.1469000512734,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-002",
+      "question": "Which safeguard requires maintaining an up-to-date inventory of authorized software?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "2.1"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "2.2",
+            "2.1",
+            "6.6",
+            "16.4",
+            "2.5"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:2.2:000",
+            "cis-controls-v8.1.2:2.1:000",
+            "cis-controls-v8.1.2:6.6:000",
+            "cis-controls-v8.1.2:16.4:000",
+            "cis-controls-v8.1.2:2.5:000"
+          ],
+          "latency_ms": 40.42249999474734,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "2.2",
+            "2.5",
+            "5.5",
+            "5.1",
+            "13.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:2.2:000",
+            "cis-controls-v8.1.2:2.5:000",
+            "cis-controls-v8.1.2:5.5:000",
+            "cis-controls-v8.1.2:5.1:000",
+            "cis-controls-v8.1.2:13.1:000"
+          ],
+          "latency_ms": 0.8173000533133745,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "2.2",
+            "2.5",
+            "6.6",
+            "16.4",
+            "2.6"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:2.2:000",
+            "cis-controls-v8.1.2:2.5:000",
+            "cis-controls-v8.1.2:6.6:000",
+            "cis-controls-v8.1.2:16.4:000",
+            "cis-controls-v8.1.2:2.6:000"
+          ],
+          "latency_ms": 41.4018000010401,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "2.1",
+            "2.2",
+            "2.5",
+            "2.6",
+            "6.6"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:2.1:000",
+            "cis-controls-v8.1.2:2.2:000",
+            "cis-controls-v8.1.2:2.5:000",
+            "cis-controls-v8.1.2:2.6:000",
+            "cis-controls-v8.1.2:6.6:000"
+          ],
+          "latency_ms": 1056.6659999312833,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-003",
+      "question": "How should an enterprise ensure that information is kept only for its required retention period?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "3.4"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "3.4",
+            "8.10",
+            "4.3",
+            "3.2",
+            "3.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:3.4:000",
+            "cis-controls-v8.1.2:8.10:000",
+            "cis-controls-v8.1.2:4.3:000",
+            "cis-controls-v8.1.2:3.2:000",
+            "cis-controls-v8.1.2:3.1:000"
+          ],
+          "latency_ms": 37.033299915492535,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "2.2",
+            "17.3",
+            "17.2",
+            "12.1",
+            "4.3"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:2.2:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:17.2:000",
+            "cis-controls-v8.1.2:12.1:000",
+            "cis-controls-v8.1.2:4.3:000"
+          ],
+          "latency_ms": 1.5658000484108925,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "4.3",
+            "2.2",
+            "3.4",
+            "17.3",
+            "3.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:4.3:000",
+            "cis-controls-v8.1.2:2.2:000",
+            "cis-controls-v8.1.2:3.4:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:3.1:000"
+          ],
+          "latency_ms": 38.81769999861717,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.3333333333333333,
+            "ndcg@5": 0.5
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "3.4",
+            "3.1",
+            "8.1",
+            "8.10",
+            "2.2"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:3.4:000",
+            "cis-controls-v8.1.2:3.1:000",
+            "cis-controls-v8.1.2:8.1:000",
+            "cis-controls-v8.1.2:8.10:000",
+            "cis-controls-v8.1.2:2.2:000"
+          ],
+          "latency_ms": 1362.8410999663174,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-004",
+      "question": "What process should be maintained to securely configure routers, switches, firewalls, and other network infrastructure?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "4.2"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "12.2",
+            "12.3",
+            "4.2",
+            "4.9",
+            "12.8"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:12.2:000",
+            "cis-controls-v8.1.2:12.3:000",
+            "cis-controls-v8.1.2:4.2:000",
+            "cis-controls-v8.1.2:4.9:000",
+            "cis-controls-v8.1.2:12.8:000"
+          ],
+          "latency_ms": 46.853700070641935,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.3333333333333333,
+            "ndcg@5": 0.5
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "12.3",
+            "12.8",
+            "4.9",
+            "14.8",
+            "12.4"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:12.3:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:4.9:000",
+            "cis-controls-v8.1.2:14.8:000",
+            "cis-controls-v8.1.2:12.4:000"
+          ],
+          "latency_ms": 0.8425000123679638,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "12.3",
+            "12.8",
+            "4.9",
+            "4.2",
+            "12.4"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:12.3:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:4.9:000",
+            "cis-controls-v8.1.2:4.2:000",
+            "cis-controls-v8.1.2:12.4:000"
+          ],
+          "latency_ms": 47.81010013539344,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.25,
+            "ndcg@5": 0.43067655807339306
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "4.2",
+            "12.2",
+            "12.3",
+            "4.1",
+            "4.9"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:4.2:000",
+            "cis-controls-v8.1.2:12.2:000",
+            "cis-controls-v8.1.2:12.3:000",
+            "cis-controls-v8.1.2:4.1:000",
+            "cis-controls-v8.1.2:4.9:000"
+          ],
+          "latency_ms": 1566.4572000969201,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-005",
+      "question": "How should an organization keep track of user, administrator, and service accounts?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "5.1"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "5.5",
+            "5.1",
+            "5.4",
+            "5.6",
+            "1.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:5.5:000",
+            "cis-controls-v8.1.2:5.1:000",
+            "cis-controls-v8.1.2:5.4:000",
+            "cis-controls-v8.1.2:5.6:000",
+            "cis-controls-v8.1.2:1.1:000"
+          ],
+          "latency_ms": 43.82589994929731,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "5.1",
+            "5.4",
+            "5.5",
+            "4.7",
+            "6.2"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:5.1:000",
+            "cis-controls-v8.1.2:5.4:000",
+            "cis-controls-v8.1.2:5.5:000",
+            "cis-controls-v8.1.2:4.7:000",
+            "cis-controls-v8.1.2:6.2:000"
+          ],
+          "latency_ms": 0.7386999204754829,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "5.1",
+            "5.5",
+            "5.4",
+            "4.7",
+            "6.2"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:5.1:000",
+            "cis-controls-v8.1.2:5.5:000",
+            "cis-controls-v8.1.2:5.4:000",
+            "cis-controls-v8.1.2:4.7:000",
+            "cis-controls-v8.1.2:6.2:000"
+          ],
+          "latency_ms": 44.70439988654107,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "5.1",
+            "5.5",
+            "5.4",
+            "4.7",
+            "15.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:5.1:000",
+            "cis-controls-v8.1.2:5.5:000",
+            "cis-controls-v8.1.2:5.4:000",
+            "cis-controls-v8.1.2:4.7:000",
+            "cis-controls-v8.1.2:15.1:000"
+          ],
+          "latency_ms": 1421.1987998569384,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-006",
+      "question": "What process is required before granting access rights to enterprise systems and data?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "6.1"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "6.1",
+            "6.2",
+            "4.6",
+            "6.5",
+            "1.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:6.1:000",
+            "cis-controls-v8.1.2:6.2:000",
+            "cis-controls-v8.1.2:4.6:000",
+            "cis-controls-v8.1.2:6.5:000",
+            "cis-controls-v8.1.2:1.1:000"
+          ],
+          "latency_ms": 32.978100003674626,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "6.1",
+            "16.14",
+            "6.2",
+            "3.3",
+            "6.8"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:6.1:000",
+            "cis-controls-v8.1.2:16.14:000",
+            "cis-controls-v8.1.2:6.2:000",
+            "cis-controls-v8.1.2:3.3:000",
+            "cis-controls-v8.1.2:6.8:000"
+          ],
+          "latency_ms": 0.8391999872401357,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "6.1",
+            "6.2",
+            "13.5",
+            "3.3",
+            "4.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:6.1:000",
+            "cis-controls-v8.1.2:6.2:000",
+            "cis-controls-v8.1.2:13.5:000",
+            "cis-controls-v8.1.2:3.3:000",
+            "cis-controls-v8.1.2:4.1:000"
+          ],
+          "latency_ms": 34.11290002986789,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "6.1",
+            "6.2",
+            "6.8",
+            "13.5",
+            "3.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:6.1:000",
+            "cis-controls-v8.1.2:6.2:000",
+            "cis-controls-v8.1.2:6.8:000",
+            "cis-controls-v8.1.2:13.5:000",
+            "cis-controls-v8.1.2:3.1:000"
+          ],
+          "latency_ms": 1367.485500057228,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-007",
+      "question": "How should internet-facing enterprise assets be checked automatically for security weaknesses?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "7.6"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "4.6",
+            "7.5",
+            "1.4",
+            "4.9",
+            "1.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:4.6:000",
+            "cis-controls-v8.1.2:7.5:000",
+            "cis-controls-v8.1.2:1.4:000",
+            "cis-controls-v8.1.2:4.9:000",
+            "cis-controls-v8.1.2:1.1:000"
+          ],
+          "latency_ms": 39.13920000195503,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "14.7",
+            "12.8",
+            "3.8",
+            "14.1",
+            "10.4"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:3.8:000",
+            "cis-controls-v8.1.2:14.1:000",
+            "cis-controls-v8.1.2:10.4:000"
+          ],
+          "latency_ms": 1.051599974744022,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "13.5",
+            "14.7",
+            "4.6",
+            "12.8",
+            "7.5"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:13.5:000",
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:4.6:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:7.5:000"
+          ],
+          "latency_ms": 40.325599955394864,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "7.6",
+            "7.5",
+            "14.7",
+            "4.3",
+            "1.4"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:7.6:000",
+            "cis-controls-v8.1.2:7.5:000",
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:4.3:000",
+            "cis-controls-v8.1.2:1.4:000"
+          ],
+          "latency_ms": 1496.1019000038505,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-008",
+      "question": "Which safeguard requires collecting audit logs from enterprise systems?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "8.2"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "8.1",
+            "8.2",
+            "8.7",
+            "8.5",
+            "8.6"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:8.1:000",
+            "cis-controls-v8.1.2:8.2:000",
+            "cis-controls-v8.1.2:8.7:000",
+            "cis-controls-v8.1.2:8.5:000",
+            "cis-controls-v8.1.2:8.6:000"
+          ],
+          "latency_ms": 40.06509995087981,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "8.8",
+            "8.12",
+            "8.2",
+            "8.6",
+            "8.7"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:8.8:000",
+            "cis-controls-v8.1.2:8.12:000",
+            "cis-controls-v8.1.2:8.2:000",
+            "cis-controls-v8.1.2:8.6:000",
+            "cis-controls-v8.1.2:8.7:000"
+          ],
+          "latency_ms": 1.2664999812841415,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.3333333333333333,
+            "ndcg@5": 0.5
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "8.2",
+            "8.7",
+            "8.1",
+            "8.6",
+            "8.8"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:8.2:000",
+            "cis-controls-v8.1.2:8.7:000",
+            "cis-controls-v8.1.2:8.1:000",
+            "cis-controls-v8.1.2:8.6:000",
+            "cis-controls-v8.1.2:8.8:000"
+          ],
+          "latency_ms": 41.56429984141141,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "8.2",
+            "8.1",
+            "8.7",
+            "8.6",
+            "8.5"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:8.2:000",
+            "cis-controls-v8.1.2:8.1:000",
+            "cis-controls-v8.1.2:8.7:000",
+            "cis-controls-v8.1.2:8.6:000",
+            "cis-controls-v8.1.2:8.5:000"
+          ],
+          "latency_ms": 1035.9833998372778,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-009",
+      "question": "How should organizations control unwanted extensions installed in web browsers and email clients?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "9.4"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "9.4",
+            "9.7",
+            "9.1",
+            "9.6",
+            "9.3"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:9.4:000",
+            "cis-controls-v8.1.2:9.7:000",
+            "cis-controls-v8.1.2:9.1:000",
+            "cis-controls-v8.1.2:9.6:000",
+            "cis-controls-v8.1.2:9.3:000"
+          ],
+          "latency_ms": 57.3111999547109,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "9.1",
+            "9.4",
+            "14.7",
+            "9.7",
+            "9.6"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:9.1:000",
+            "cis-controls-v8.1.2:9.4:000",
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:9.7:000",
+            "cis-controls-v8.1.2:9.6:000"
+          ],
+          "latency_ms": 1.0856000008061528,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "9.4",
+            "9.1",
+            "9.7",
+            "9.6",
+            "9.2"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:9.4:000",
+            "cis-controls-v8.1.2:9.1:000",
+            "cis-controls-v8.1.2:9.7:000",
+            "cis-controls-v8.1.2:9.6:000",
+            "cis-controls-v8.1.2:9.2:000"
+          ],
+          "latency_ms": 58.56250005308539,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "9.4",
+            "9.1",
+            "9.6",
+            "9.7",
+            "9.5"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:9.4:000",
+            "cis-controls-v8.1.2:9.1:000",
+            "cis-controls-v8.1.2:9.6:000",
+            "cis-controls-v8.1.2:9.7:000",
+            "cis-controls-v8.1.2:9.5:000"
+          ],
+          "latency_ms": 1386.0887001501396,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-010",
+      "question": "What protection should be deployed and maintained to detect malicious software on enterprise assets?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "10.1"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "10.1",
+            "4.6",
+            "2.2",
+            "2.3",
+            "7.6"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:10.1:000",
+            "cis-controls-v8.1.2:4.6:000",
+            "cis-controls-v8.1.2:2.2:000",
+            "cis-controls-v8.1.2:2.3:000",
+            "cis-controls-v8.1.2:7.6:000"
+          ],
+          "latency_ms": 59.71559998579323,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "3.8",
+            "3.14",
+            "18.2",
+            "12.8",
+            "9.3"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:3.8:000",
+            "cis-controls-v8.1.2:3.14:000",
+            "cis-controls-v8.1.2:18.2:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:9.3:000"
+          ],
+          "latency_ms": 1.914000022225082,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "10.1",
+            "4.7",
+            "4.8",
+            "2.4",
+            "10.5"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:10.1:000",
+            "cis-controls-v8.1.2:4.7:000",
+            "cis-controls-v8.1.2:4.8:000",
+            "cis-controls-v8.1.2:2.4:000",
+            "cis-controls-v8.1.2:10.5:000"
+          ],
+          "latency_ms": 61.81520002428442,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "10.1",
+            "13.2",
+            "9.3",
+            "10.5",
+            "2.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:10.1:000",
+            "cis-controls-v8.1.2:13.2:000",
+            "cis-controls-v8.1.2:9.3:000",
+            "cis-controls-v8.1.2:10.5:000",
+            "cis-controls-v8.1.2:2.1:000"
+          ],
+          "latency_ms": 1603.2299000071362,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-011",
+      "question": "What documented process should an organization maintain for restoring data following an incident?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "11.1"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "11.1",
+            "17.3",
+            "17.4",
+            "11.2",
+            "17.8"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:11.1:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:17.4:000",
+            "cis-controls-v8.1.2:11.2:000",
+            "cis-controls-v8.1.2:17.8:000"
+          ],
+          "latency_ms": 46.03460000362247,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "17.4",
+            "17.3",
+            "17.9",
+            "17.7",
+            "6.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:17.4:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:17.9:000",
+            "cis-controls-v8.1.2:17.7:000",
+            "cis-controls-v8.1.2:6.1:000"
+          ],
+          "latency_ms": 1.2085000053048134,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 0.0,
+            "hit_rate@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "17.4",
+            "17.3",
+            "17.9",
+            "11.1",
+            "17.7"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:17.4:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:17.9:000",
+            "cis-controls-v8.1.2:11.1:000",
+            "cis-controls-v8.1.2:17.7:000"
+          ],
+          "latency_ms": 47.44970006868243,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 0.0,
+            "hit_rate@3": 0.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.25,
+            "ndcg@5": 0.43067655807339306
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "17.3",
+            "17.4",
+            "11.1",
+            "17.9",
+            "3.1"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:17.4:000",
+            "cis-controls-v8.1.2:11.1:000",
+            "cis-controls-v8.1.2:17.9:000",
+            "cis-controls-v8.1.2:3.1:000"
+          ],
+          "latency_ms": 1360.328100156039,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.3333333333333333,
+            "ndcg@5": 0.5
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-012",
+      "question": "What network protections should remote devices use when connecting to enterprise resources?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "12.7"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "12.7",
+            "13.5",
+            "6.4",
+            "4.6",
+            "12.8"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:12.7:000",
+            "cis-controls-v8.1.2:13.5:000",
+            "cis-controls-v8.1.2:6.4:000",
+            "cis-controls-v8.1.2:4.6:000",
+            "cis-controls-v8.1.2:12.8:000"
+          ],
+          "latency_ms": 55.510399979539216,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "12.7",
+            "13.5",
+            "12.8",
+            "9.2",
+            "9.3"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:12.7:000",
+            "cis-controls-v8.1.2:13.5:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:9.2:000",
+            "cis-controls-v8.1.2:9.3:000"
+          ],
+          "latency_ms": 1.2359999818727374,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "12.7",
+            "13.5",
+            "12.8",
+            "4.11",
+            "9.2"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:12.7:000",
+            "cis-controls-v8.1.2:13.5:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:4.11:000",
+            "cis-controls-v8.1.2:9.2:000"
+          ],
+          "latency_ms": 56.902799871750176,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "12.7",
+            "13.5",
+            "14.8",
+            "9.3",
+            "1.2"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:12.7:000",
+            "cis-controls-v8.1.2:13.5:000",
+            "cis-controls-v8.1.2:14.8:000",
+            "cis-controls-v8.1.2:9.3:000",
+            "cis-controls-v8.1.2:1.2:000"
+          ],
+          "latency_ms": 1400.7657999172807,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-013",
+      "question": "How should security alerts produced by different systems be managed in one central location?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "13.1"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "13.1",
+            "17.6",
+            "13.11",
+            "12.8",
+            "12.5"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:13.1:000",
+            "cis-controls-v8.1.2:17.6:000",
+            "cis-controls-v8.1.2:13.11:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:12.5:000"
+          ],
+          "latency_ms": 47.5876999553293,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "14.7",
+            "5.1",
+            "13.1",
+            "12.8",
+            "3.8"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:5.1:000",
+            "cis-controls-v8.1.2:13.1:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:3.8:000"
+          ],
+          "latency_ms": 1.0495999595150352,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.3333333333333333,
+            "ndcg@5": 0.5
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "13.1",
+            "12.8",
+            "14.7",
+            "17.6",
+            "16.8"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:13.1:000",
+            "cis-controls-v8.1.2:12.8:000",
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:17.6:000",
+            "cis-controls-v8.1.2:16.8:000"
+          ],
+          "latency_ms": 48.800399992614985,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "13.1",
+            "16.8",
+            "13.11",
+            "12.5",
+            "6.7"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:13.1:000",
+            "cis-controls-v8.1.2:16.8:000",
+            "cis-controls-v8.1.2:13.11:000",
+            "cis-controls-v8.1.2:12.5:000",
+            "cis-controls-v8.1.2:6.7:000"
+          ],
+          "latency_ms": 1486.6852998966351,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-014",
+      "question": "What training helps workforce members recognize and report possible security incidents?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "14.6"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "14.6",
+            "14.7",
+            "14.2",
+            "14.3",
+            "14.4"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:14.6:000",
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:14.2:000",
+            "cis-controls-v8.1.2:14.3:000",
+            "cis-controls-v8.1.2:14.4:000"
+          ],
+          "latency_ms": 45.2914999332279,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "14.6",
+            "14.2",
+            "14.3",
+            "17.3",
+            "14.7"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:14.6:000",
+            "cis-controls-v8.1.2:14.2:000",
+            "cis-controls-v8.1.2:14.3:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:14.7:000"
+          ],
+          "latency_ms": 1.5943999169394374,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "14.6",
+            "14.2",
+            "14.7",
+            "14.3",
+            "14.4"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:14.6:000",
+            "cis-controls-v8.1.2:14.2:000",
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:14.3:000",
+            "cis-controls-v8.1.2:14.4:000"
+          ],
+          "latency_ms": 47.13719990104437,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "14.6",
+            "14.2",
+            "14.7",
+            "14.5",
+            "14.3"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:14.6:000",
+            "cis-controls-v8.1.2:14.2:000",
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:14.5:000",
+            "cis-controls-v8.1.2:14.3:000"
+          ],
+          "latency_ms": 1004.324399982579,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-015",
+      "question": "How should an enterprise keep track of the external service providers on which it relies?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "15.1"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "15.1",
+            "1.1",
+            "15.2",
+            "15.6",
+            "4.12"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:15.1:000",
+            "cis-controls-v8.1.2:1.1:000",
+            "cis-controls-v8.1.2:15.2:000",
+            "cis-controls-v8.1.2:15.6:000",
+            "cis-controls-v8.1.2:4.12:000"
+          ],
+          "latency_ms": 52.16690001543611,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "14.7",
+            "15.1",
+            "15.7",
+            "15.6",
+            "15.5"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:15.1:000",
+            "cis-controls-v8.1.2:15.7:000",
+            "cis-controls-v8.1.2:15.6:000",
+            "cis-controls-v8.1.2:15.5:000"
+          ],
+          "latency_ms": 2.3339000763371587,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "15.1",
+            "15.6",
+            "15.2",
+            "15.5",
+            "15.7"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:15.1:000",
+            "cis-controls-v8.1.2:15.6:000",
+            "cis-controls-v8.1.2:15.2:000",
+            "cis-controls-v8.1.2:15.5:000",
+            "cis-controls-v8.1.2:15.7:000"
+          ],
+          "latency_ms": 54.75140002090484,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "15.1",
+            "15.6",
+            "3.8",
+            "15.5",
+            "15.2"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:15.1:000",
+            "cis-controls-v8.1.2:15.6:000",
+            "cis-controls-v8.1.2:3.8:000",
+            "cis-controls-v8.1.2:15.5:000",
+            "cis-controls-v8.1.2:15.2:000"
+          ],
+          "latency_ms": 1595.7014999585226,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-016",
+      "question": "What process should allow external parties to report software vulnerabilities and ensure those reports are addressed?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "16.2"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "16.2",
+            "17.3",
+            "16.6",
+            "16.3",
+            "2.2"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:16.2:000",
+            "cis-controls-v8.1.2:16.2:001",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:16.6:000",
+            "cis-controls-v8.1.2:16.3:000"
+          ],
+          "latency_ms": 52.762000006623566,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "16.2",
+            "16.6",
+            "14.7",
+            "17.3",
+            "2.6"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:16.2:000",
+            "cis-controls-v8.1.2:16.6:000",
+            "cis-controls-v8.1.2:14.7:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:2.6:000"
+          ],
+          "latency_ms": 1.5436999965459108,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "16.2",
+            "16.6",
+            "17.3",
+            "16.3",
+            "2.6"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:16.2:000",
+            "cis-controls-v8.1.2:16.6:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:16.2:001",
+            "cis-controls-v8.1.2:16.3:000"
+          ],
+          "latency_ms": 54.58500003442168,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "16.2",
+            "16.6",
+            "7.7",
+            "16.3",
+            "17.3"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:16.2:000",
+            "cis-controls-v8.1.2:16.2:001",
+            "cis-controls-v8.1.2:16.6:000",
+            "cis-controls-v8.1.2:7.7:000",
+            "cis-controls-v8.1.2:16.3:000"
+          ],
+          "latency_ms": 1520.4673999687657,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-017",
+      "question": "What contact details should be kept current so people know where to report a security incident?",
+      "category": "paraphrase",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "17.2"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "17.2",
+            "17.6",
+            "17.3",
+            "17.9",
+            "17.8"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:17.2:000",
+            "cis-controls-v8.1.2:17.6:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:17.9:000",
+            "cis-controls-v8.1.2:17.8:000"
+          ],
+          "latency_ms": 51.40979995485395,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "14.6",
+            "17.6",
+            "17.2",
+            "17.3",
+            "14.7"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:14.6:000",
+            "cis-controls-v8.1.2:17.6:000",
+            "cis-controls-v8.1.2:17.2:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:14.7:000"
+          ],
+          "latency_ms": 1.7573999939486384,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.3333333333333333,
+            "ndcg@5": 0.5
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "17.2",
+            "17.6",
+            "17.3",
+            "14.6",
+            "17.9"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:17.2:000",
+            "cis-controls-v8.1.2:17.6:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:14.6:000",
+            "cis-controls-v8.1.2:17.9:000"
+          ],
+          "latency_ms": 53.4066999098286,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "17.2",
+            "17.6",
+            "17.3",
+            "14.6",
+            "17.9"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:17.2:000",
+            "cis-controls-v8.1.2:17.6:000",
+            "cis-controls-v8.1.2:17.3:000",
+            "cis-controls-v8.1.2:14.6:000",
+            "cis-controls-v8.1.2:17.9:000"
+          ],
+          "latency_ms": 1031.1125998850912,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      }
+    },
+    {
+      "example_id": "seed-018",
+      "question": "Which safeguard requires periodically testing the organization’s own environment through internal penetration tests?",
+      "category": "direct",
+      "split": "dev",
+      "expected_safeguard_ids": [
+        "18.5"
+      ],
+      "methods": {
+        "vector": {
+          "ranked_safeguard_ids": [
+            "18.2",
+            "18.5",
+            "18.1",
+            "16.13",
+            "18.4"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:18.2:000",
+            "cis-controls-v8.1.2:18.5:000",
+            "cis-controls-v8.1.2:18.1:000",
+            "cis-controls-v8.1.2:16.13:000",
+            "cis-controls-v8.1.2:18.4:000"
+          ],
+          "latency_ms": 53.353399969637394,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575
+          }
+        },
+        "bm25": {
+          "ranked_safeguard_ids": [
+            "18.5",
+            "18.2",
+            "16.13",
+            "18.1",
+            "18.3"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:18.5:000",
+            "cis-controls-v8.1.2:18.2:000",
+            "cis-controls-v8.1.2:16.13:000",
+            "cis-controls-v8.1.2:18.1:000",
+            "cis-controls-v8.1.2:18.3:000"
+          ],
+          "latency_ms": 1.645199954509735,
+          "metrics": {
+            "recall@1": 1.0,
+            "hit_rate@1": 1.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        "rrf": {
+          "ranked_safeguard_ids": [
+            "18.2",
+            "18.5",
+            "16.13",
+            "18.1",
+            "18.4"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:18.2:000",
+            "cis-controls-v8.1.2:18.5:000",
+            "cis-controls-v8.1.2:16.13:000",
+            "cis-controls-v8.1.2:18.1:000",
+            "cis-controls-v8.1.2:18.4:000"
+          ],
+          "latency_ms": 55.2558999042958,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575
+          }
+        },
+        "hybrid_reranked": {
+          "ranked_safeguard_ids": [
+            "18.2",
+            "18.5",
+            "18.1",
+            "18.3",
+            "18.4"
+          ],
+          "top_chunk_ids": [
+            "cis-controls-v8.1.2:18.2:000",
+            "cis-controls-v8.1.2:18.5:000",
+            "cis-controls-v8.1.2:18.1:000",
+            "cis-controls-v8.1.2:18.3:000",
+            "cis-controls-v8.1.2:18.4:000"
+          ],
+          "latency_ms": 1490.4982998268679,
+          "metrics": {
+            "recall@1": 0.0,
+            "hit_rate@1": 0.0,
+            "recall@3": 1.0,
+            "hit_rate@3": 1.0,
+            "recall@5": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575
+          }
+        }
+      }
+    }
+  ]
+}

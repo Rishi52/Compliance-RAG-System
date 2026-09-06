@@ -1,72 +1,158 @@
 import json
-import chromadb
+from pathlib import Path
+from typing import Any
 
+import chromadb
 from sentence_transformers import SentenceTransformer
 
-DATA_PATH = "data/processed/cis_safeguards.json"
+from config.settings import settings
 
-CHROMA_PATH = "chroma_db"
 
-COLLECTION_NAME = "cis_controls"
+REQUIRED_CHUNK_FIELDS = {
+    "chunk_id",
+    "document_id",
+    "chunk_index",
+    "page",
+    "control_id",
+    "control_name",
+    "safeguard_id",
+    "safeguard_name",
+    "content",
+}
 
-print("Loading safeguards...")
 
-with open(DATA_PATH, "r", encoding="utf-8") as f:
-    safeguards = json.load(f)
+def load_chunks(input_path: Path) -> list[dict[str, Any]]:
+    """Load and validate chunks before indexing."""
 
-print(f"Loaded {len(safeguards)} safeguards")
+    if not input_path.exists():
+        raise FileNotFoundError(
+            f"Chunk data was not found at: {input_path}\n"
+            "Run: python -m scripts.chunk_safeguards"
+        )
 
-print("Loading embedding model...")
+    chunks = json.loads(input_path.read_text(encoding="utf-8"))
 
-model = SentenceTransformer(
-    "BAAI/bge-small-en-v1.5"
-)
+    if not isinstance(chunks, list) or not chunks:
+        raise ValueError("Chunk input must be a non-empty JSON list.")
 
-print("Creating Chroma client...")
+    seen_ids: set[str] = set()
 
-client = chromadb.PersistentClient(
-    path=CHROMA_PATH
-)
+    for position, chunk in enumerate(chunks):
+        if not isinstance(chunk, dict):
+            raise ValueError(
+                f"Chunk at position {position} is not an object."
+            )
 
-collection = client.get_or_create_collection(
-    name=COLLECTION_NAME
-)
+        missing_fields = REQUIRED_CHUNK_FIELDS - chunk.keys()
 
-documents = []
-metadatas = []
-ids = []
+        if missing_fields:
+            raise ValueError(
+                f"Chunk at position {position} is missing: "
+                f"{sorted(missing_fields)}"
+            )
 
-for item in safeguards:
+        chunk_id = chunk["chunk_id"]
 
-    documents.append(item["content"])
+        if chunk_id in seen_ids:
+            raise ValueError(f"Duplicate chunk ID: {chunk_id}")
 
-    metadatas.append(
-        {
-            "page": item["page"],
-            "control_id": item["control_id"],
-            "control_name": item["control_name"],
-            "safeguard_id": item["safeguard_id"],
-            "safeguard_name": item["safeguard_name"]
-        }
+        if not chunk["content"].strip():
+            raise ValueError(f"Chunk {chunk_id} has empty content.")
+
+        seen_ids.add(chunk_id)
+
+    return chunks
+
+
+def build_metadata(chunk: dict[str, Any]) -> dict[str, str | int]:
+    """Convert chunk metadata into Chroma-compatible scalar values."""
+
+    return {
+        "chunk_id": chunk["chunk_id"],
+        "document_id": chunk["document_id"],
+        "chunk_index": int(chunk["chunk_index"]),
+        "page": int(chunk["page"]),
+        "control_id": str(chunk["control_id"]),
+        "control_name": str(chunk["control_name"]),
+        "safeguard_id": str(chunk["safeguard_id"]),
+        "safeguard_name": str(chunk["safeguard_name"]),
+    }
+
+
+def create_vector_index(
+    chunks: list[dict[str, Any]],
+) -> tuple[int, int]:
+    """Create or update the persistent Chroma vector index."""
+
+    print(f"Loading embedding model: {settings.embedding_model}")
+
+    model = SentenceTransformer(settings.embedding_model)
+
+    documents = [chunk["content"] for chunk in chunks]
+    ids = [chunk["chunk_id"] for chunk in chunks]
+    metadatas = [build_metadata(chunk) for chunk in chunks]
+
+    print(f"Generating embeddings for {len(documents)} chunks...")
+
+    embeddings = model.encode(
+        documents,
+        batch_size=32,
+        show_progress_bar=True,
+        normalize_embeddings=True,
+        convert_to_numpy=True,
+    ).tolist()
+
+    client = chromadb.PersistentClient(
+        path=str(settings.chroma_path)
     )
 
-    ids.append(item["safeguard_id"])
+    collection = client.get_or_create_collection(
+        name=settings.chroma_collection,
+        metadata={"hnsw:space": "cosine"},
+    )
 
-print("Generating embeddings...")
+    # Remove records that no longer exist in the current chunk dataset.
+    existing_ids = set(collection.get()["ids"])
+    current_ids = set(ids)
+    stale_ids = sorted(existing_ids - current_ids)
 
-embeddings = model.encode(
-    documents,
-    show_progress_bar=True
-).tolist()
+    if stale_ids:
+        collection.delete(ids=stale_ids)
 
-print("Storing in ChromaDB...")
+    # Upsert makes indexing safe to run repeatedly.
+    collection.upsert(
+        ids=ids,
+        documents=documents,
+        embeddings=embeddings,
+        metadatas=metadatas,
+    )
 
-collection.add(
-    ids=ids,
-    documents=documents,
-    embeddings=embeddings,
-    metadatas=metadatas
-)
+    stored_ids = set(collection.get()["ids"])
 
-print("Done!")
-print(f"Stored {len(ids)} safeguards")
+    if stored_ids != current_ids:
+        missing_ids = sorted(current_ids - stored_ids)
+        unexpected_ids = sorted(stored_ids - current_ids)
+
+        raise RuntimeError(
+            "Vector index validation failed. "
+            f"Missing IDs: {missing_ids[:5]}; "
+            f"Unexpected IDs: {unexpected_ids[:5]}"
+        )
+
+    return collection.count(), len(stale_ids)
+
+
+def main() -> None:
+    chunks = load_chunks(settings.chunked_safeguards_path)
+
+    stored_count, removed_count = create_vector_index(chunks)
+
+    print(f"Source chunks: {len(chunks)}")
+    print(f"Removed stale records: {removed_count}")
+    print(f"Stored vector records: {stored_count}")
+    print(f"Collection: {settings.chroma_collection}")
+    print(f"Database path: {settings.chroma_path}")
+
+
+if __name__ == "__main__":
+    main()

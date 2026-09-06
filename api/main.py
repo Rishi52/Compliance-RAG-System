@@ -1,111 +1,376 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+import logging
+from collections.abc import Callable
+from contextlib import asynccontextmanager
+from typing import Any
+from time import perf_counter
+from uuid import uuid4
+
+from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-
-from retrieval.hybrid_retriever import HybridRetriever
-from langchain_ollama import ChatOllama
-
-from config.prompt_loader import load_prompt
-
-app = FastAPI(
-    title="Compliance RAG"
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+)
+from api.security import (
+    OUT_OF_SCOPE_RESPONSE,
+    is_compliance_question,
+    validate_question_security,
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+from config.logging_config import configure_logging
+from config.settings import settings
 
-retriever = HybridRetriever()
+configure_logging(settings.log_level)
 
-llm = ChatOllama(
-    model="llama3.2:1b",
-    temperature=0
-)
+logger = logging.getLogger(__name__)
+router = APIRouter()
 
-SYSTEM_PROMPT = load_prompt()
+Services = tuple[Any, Any, Any]
+ServiceFactory = Callable[[], Services]
 
 
 class QuestionRequest(BaseModel):
-    question: str
+    """Incoming compliance question."""
 
+    model_config = ConfigDict(extra="forbid")
 
-@app.get("/")
-def root():
-    return {
-        "message": "Compliance RAG Running"
-    }
-
-
-@app.post("/chat")
-def chat(request: QuestionRequest):
-
-    query = request.question
-
-    docs = retriever.search(
-        query=query,
-        k=2
+    question: str = Field(
+        min_length=1,
+        max_length=settings.max_question_length,
     )
 
-    context = ""
+    @field_validator("question")
+    @classmethod
+    def strip_and_validate_question(cls, value: str) -> str:
+        value = value.strip()
 
-    for doc in docs:
+        if not value:
+            raise ValueError("Question cannot be empty.")
 
-        meta = doc["metadata"]
+        return validate_question_security(value)
 
-        context += f"""
-Control ID: {meta['control_id']}
-Safeguard ID: {meta['safeguard_id']}
-Page: {meta['page']}
 
-{doc['content']}
+class SourceResponse(BaseModel):
+    """Evidence source returned to the client."""
 
-------------------------------------
-"""
+    source_id: str
+    chunk_id: str
+    control_id: str
+    control_name: str
+    safeguard_id: str
+    safeguard_name: str
+    page: int
 
-    prompt = f"""
-You are a cybersecurity compliance auditor.
 
-Answer ONLY using the provided context.
+class ChatResponse(BaseModel):
+    """Grounded answer with its source records."""
 
-Rules:
+    answer: str
+    sources: list[SourceResponse]
+    citation_valid: bool
+    generation_attempts: int
 
-- Give a concise answer.
-- Use bullet points whenever possible.
-- Do NOT explain your reasoning.
-- Do NOT discuss retrieved chunks.
-- Do NOT mention irrelevant controls.
-- If the answer is not present, respond exactly:
 
-Insufficient compliance data found.
+def build_services() -> Services:
+    """Construct production services only during API startup."""
 
-Context:
+    from generation.context_selector import (
+        SafeguardContextSelector,
+    )
+    from generation.generator import ComplianceGenerator
+    from retrieval.hybrid_retriever import HybridRetriever
 
-{context}
+    return (
+        HybridRetriever(),
+        SafeguardContextSelector(),
+        ComplianceGenerator(),
+    )
 
-Question:
-{query}
-"""
 
-    response = llm.invoke(prompt)
+def clear_services(application: FastAPI) -> None:
+    """Remove application service references."""
 
-    sources = []
+    application.state.retriever = None
+    application.state.context_selector = None
+    application.state.generator = None
 
-    for doc in docs:
-        meta = doc["metadata"]
 
-        sources.append({
-            "control_id": meta["control_id"],
-            "control_name": meta["control_name"],
-            "safeguard_id": meta["safeguard_id"],
-            "safeguard_name": meta["safeguard_name"],
-            "page": meta["page"]
-        })
+def get_services(request: Request) -> Services:
+    """Return initialized services or report unavailability."""
+
+    services = (
+        getattr(request.app.state, "retriever", None),
+        getattr(
+            request.app.state,
+            "context_selector",
+            None,
+        ),
+        getattr(request.app.state, "generator", None),
+    )
+
+    if any(service is None for service in services):
+        raise HTTPException(
+            status_code=503,
+            detail="Application services are not ready.",
+        )
+
+    return services
+
+
+def create_lifespan(service_factory: ServiceFactory):
+    """Create an application lifespan using supplied services."""
+
+    @asynccontextmanager
+    async def application_lifespan(
+        application: FastAPI,
+    ):
+        clear_services(application)
+
+        logger.info(
+            "Loading retrieval and generation services."
+        )
+
+        try:
+            services = service_factory()
+
+            if (
+                not isinstance(services, tuple)
+                or len(services) != 3
+                or any(
+                    service is None
+                    for service in services
+                )
+            ):
+                raise RuntimeError(
+                    "The service factory must return three "
+                    "initialized services."
+                )
+
+            (
+                application.state.retriever,
+                application.state.context_selector,
+                application.state.generator,
+            ) = services
+        except Exception:
+            clear_services(application)
+            logger.exception(
+                "Compliance RAG service startup failed."
+            )
+            raise
+
+        logger.info("Compliance RAG services are ready.")
+
+        try:
+            yield
+        finally:
+            clear_services(application)
+            logger.info(
+                "Compliance RAG services were released."
+            )
+
+    return application_lifespan
+
+
+def create_app(
+    service_factory: ServiceFactory = build_services,
+) -> FastAPI:
+    """Create and configure the FastAPI application."""
+
+    application = FastAPI(
+        title=settings.app_name,
+        version=settings.app_version,
+        description=(
+            "Evidence-grounded CIS Controls "
+            "question-answering API."
+        ),
+        lifespan=create_lifespan(service_factory),
+    )
+
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.allowed_cors_origins,
+        allow_credentials=False,
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type"],
+        expose_headers=["X-Request-ID"],
+    )
+
+    @application.middleware("http")
+    async def log_http_request(request: Request, call_next):
+        request_id = str(uuid4())
+        request.state.request_id = request_id
+        started_at = perf_counter()
+
+        try:
+            response = await call_next(request)
+        except Exception:
+            duration_ms = round(
+                (perf_counter() - started_at) * 1000,
+                2,
+            )
+
+            logger.exception(
+                "HTTP request failed.",
+                extra={
+                    "request_id": request_id,
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status_code": 500,
+                    "duration_ms": duration_ms,
+                },
+            )
+            raise
+
+        duration_ms = round(
+            (perf_counter() - started_at) * 1000,
+            2,
+        )
+
+        response.headers["X-Request-ID"] = request_id
+
+        log_level = (
+            logging.ERROR
+            if response.status_code >= 500
+            else logging.INFO
+        )
+
+        logger.log(
+            log_level,
+            "HTTP request completed.",
+            extra={
+                "request_id": request_id,
+                "method": request.method,
+                "path": request.url.path,
+                "status_code": response.status_code,
+                "duration_ms": duration_ms,
+            },
+        )
+
+        return response
+
+    application.include_router(router)
+
+    return application
+
+
+@router.get("/")
+def root() -> dict[str, str]:
+    return {
+        "message": "Compliance RAG is running.",
+        "version": settings.app_version,
+    }
+
+
+@router.get("/health/live")
+def liveness() -> dict[str, str]:
+    """Confirm that the API process is running."""
+
+    return {"status": "alive"}
+
+
+@router.get("/health/ready")
+def readiness(request: Request) -> dict[str, Any]:
+    """Confirm retrieval and generation are initialized."""
+
+    retriever, _, _ = get_services(request)
+
+    try:
+        indexed_chunks = int(
+            retriever.vector.collection.count()
+        )
+    except Exception as error:
+        logger.exception(
+            "Retrieval index readiness check failed."
+        )
+
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to verify retrieval index.",
+        ) from error
 
     return {
-        "answer": response.content,
-        "sources": sources
+        "status": "ready",
+        "indexed_chunks": indexed_chunks,
+        "generation_model": settings.ollama_model,
     }
+
+
+@router.post(
+    "/chat",
+    response_model=ChatResponse,
+)
+def chat(
+    payload: QuestionRequest,
+    request: Request,
+) -> ChatResponse:
+    """Retrieve evidence and generate a grounded answer."""
+
+    retriever, context_selector, generator = (
+        get_services(request)
+    )
+
+    if not is_compliance_question(payload.question):
+        logger.info(
+            "Out-of-scope question safely abstained."
+        )
+
+        return ChatResponse(
+            answer=OUT_OF_SCOPE_RESPONSE,
+            sources=[],
+            citation_valid=True,
+            generation_attempts=0,
+        )
+
+    try:
+        ranked_documents = retriever.search(
+            query=payload.question,
+            k=settings.final_top_k,
+        )
+
+        selected_documents = context_selector.select(
+            ranked_documents
+        )
+
+        result = generator.generate(
+            query=payload.question,
+            documents=selected_documents,
+        )
+    except ValueError:
+        logger.warning(
+            "Compliance question was rejected during processing.",
+            exc_info=True,
+        )
+
+        raise HTTPException(
+            status_code=422,
+            detail="Invalid compliance question.",
+        ) from None
+
+    except Exception as error:
+        logger.exception(
+            "Compliance question processing failed."
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Unable to process the compliance question."
+            ),
+        ) from error
+
+    sources = [
+        SourceResponse(**source)
+        for source in result["sources"]
+    ]
+
+    return ChatResponse(
+        answer=result["answer"],
+        sources=sources,
+        citation_valid=result["citation_valid"],
+        generation_attempts=result["generation_attempts"],
+    )
+
+
+app = create_app()
