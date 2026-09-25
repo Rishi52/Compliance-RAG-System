@@ -17,11 +17,13 @@ The system combines dense retrieval, BM25, Reciprocal Rank Fusion, cross-encoder
 - Citation validation and automatic retry
 - Safe abstention when evidence is insufficient
 - FastAPI REST API and browser frontend
+- Live pipeline stages and streamed, clearly marked answer previews
+- Client-visible first-preview and total-response timings
 - Liveness and readiness health checks
 - JSON request logs with request IDs and timing
 - Docker Compose deployment
 - Automated GitHub Actions CI
-- 160 automated unit and integration tests
+- Automated Python and frontend streaming tests
 
 ## Architecture
 
@@ -45,6 +47,7 @@ flowchart TD
 | Context selection | `generation/context_selector.py` | Safeguard-consistent evidence |
 | Generation | `generation/generator.py` | Cited answer or abstention |
 | API | `api/main.py` | Validated JSON response |
+| Streaming API | `api/main.py` | NDJSON stage events, draft tokens and checked final answer |
 
 ## Retrieval flow
 
@@ -167,6 +170,7 @@ Available endpoints:
 
 - API root: `http://127.0.0.1:8000/`
 - Swagger UI: `http://127.0.0.1:8000/docs`
+- Streaming endpoint: `POST http://127.0.0.1:8000/chat/stream`
 - Liveness: `http://127.0.0.1:8000/health/live`
 - Readiness: `http://127.0.0.1:8000/health/ready`
 
@@ -223,6 +227,29 @@ Example response structure:
 
 Every API response also contains an `X-Request-ID` header for log correlation.
 
+### Streamed answers in the browser
+
+The frontend calls `POST /chat/stream` with the same JSON question. It
+receives newline-delimited JSON (`application/x-ndjson`) containing actual
+`retrieving`, `selecting`, `generating` and `validating` stage events, followed
+by draft text and one `complete` event. On a citation retry, the `retry` event
+clears the previous draft. An `error` event ends a failed stream without
+revealing an internal error message. The original `POST /chat` endpoint and
+its JSON response remain unchanged for existing clients and evaluations.
+
+**Draft text is unverified** and is never offered for copying. The frontend
+replaces it with the citation-checked final answer, including any abstention.
+The UI shows elapsed time to the first *draft preview* and total elapsed time;
+streaming improves perceived responsiveness but does not guarantee faster
+generation. The stop button ends the browser's wait; backend computation may
+continue briefly after a disconnect.
+
+To try it after both servers start, ask one of the example questions in the
+browser. You should see the actual stages, then a labeled live preview, and
+finally a checked answer with sources. To exercise a retry, use the automated
+generator and API tests rather than depending on a model to produce an invalid
+citation on demand.
+
 ## Docker deployment
 
 The processed chunk file and Chroma index must already exist before starting the container.
@@ -269,6 +296,8 @@ Run individual groups:
 ```powershell
 python -m pytest tests\unit -q
 python -m pytest tests\integration -q
+node --check frontend\app.js
+node --test tests\frontend\test_stream.cjs
 ```
 
 Additional checks:
@@ -327,8 +356,7 @@ Question text and retrieved evidence are not written to request logs.
 
 ## Quality status
 
-- 153 tests before observability
-- 160 tests after observability
+- 213 Python tests and 3 frontend stream-parser tests in this branch
 - Automated Python 3.13 CI
 - Dockerfile and Compose validation
 - Citation checking and safe abstention

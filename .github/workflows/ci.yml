@@ -73,3 +73,13 @@ jobs:
           docker compose config --quiet
       - name: Run test suite
         run: python -m pytest -q
+
+      - name: Set up Node for frontend checks
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check streaming frontend
+        run: |
+          node --check frontend/app.js
+          node --test tests/frontend/test_stream.cjs

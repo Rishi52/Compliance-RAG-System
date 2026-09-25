@@ -1,4 +1,5 @@
 import re
+from collections.abc import Iterator
 from typing import Any
 
 from langchain_core.messages import (
@@ -211,26 +212,12 @@ class ComplianceGenerator:
 
         return " ".join(repaired_sentences)
 
-    def generate(
+    def _build_messages(
         self,
         query: str,
         documents: list[dict[str, Any]],
-    ) -> dict[str, Any]:
-        """Generate an answer and retry once if citations are invalid."""
-
-        query = query.strip()
-
-        if not query:
-            raise ValueError("Question cannot be empty.")
-
-        if not documents:
-            return {
-                "answer": INSUFFICIENT_RESPONSE,
-                "sources": [],
-                "citation_valid": True,
-                "generation_attempts": 0,
-            }
-
+    ) -> tuple[list[Any], list[dict[str, Any]], str]:
+        """Prepare identical evidence prompts for JSON and streamed chat."""
         evidence, sources = self.build_evidence(documents)
         allowed_labels = ", ".join(
             f"[{source['source_id']}]"
@@ -259,6 +246,61 @@ class ComplianceGenerator:
             SystemMessage(content=self.system_prompt),
             HumanMessage(content=user_prompt),
         ]
+        return messages, sources, allowed_labels
+
+    @staticmethod
+    def _add_retry(
+        messages: list[Any],
+        answer: str,
+        validation_error: str | None,
+        allowed_labels: str,
+    ) -> None:
+        messages.extend(
+            [
+                AIMessage(content=answer),
+                HumanMessage(
+                    content=(
+                        "Return only a corrected answer.\n"
+                        "The previous response failed citation "
+                        "validation.\n"
+                        f"Validation error: {validation_error}\n"
+                        f"Allowed citation labels: "
+                        f"{allowed_labels}\n"
+                        "Use only the supplied evidence. End "
+                        "every factual sentence with an allowed "
+                        "citation label. Do not explain the "
+                        "correction. If the evidence does not "
+                        "answer the question, return exactly: "
+                        f"{INSUFFICIENT_RESPONSE}"
+                    )
+                ),
+            ]
+        )
+
+    @staticmethod
+    def _no_evidence_result() -> dict[str, Any]:
+        return {
+            "answer": INSUFFICIENT_RESPONSE,
+            "sources": [],
+            "citation_valid": True,
+            "generation_attempts": 0,
+        }
+
+    def generate(
+        self,
+        query: str,
+        documents: list[dict[str, Any]],
+    ) -> dict[str, Any]:
+        """Generate an answer and retry if citations are invalid."""
+        query = query.strip()
+        if not query:
+            raise ValueError("Question cannot be empty.")
+        if not documents:
+            return self._no_evidence_result()
+
+        messages, sources, allowed_labels = self._build_messages(
+            query, documents
+        )
 
         last_error: str | None = None
 
@@ -293,26 +335,8 @@ class ComplianceGenerator:
 
             last_error = validation_error
 
-            messages.extend(
-                [
-                    AIMessage(content=answer),
-                    HumanMessage(
-                        content=(
-                            "Return only a corrected answer.\n"
-                            "The previous response failed citation "
-                            "validation.\n"
-                            f"Validation error: {validation_error}\n"
-                            f"Allowed citation labels: "
-                            f"{allowed_labels}\n"
-                            "Use only the supplied evidence. End "
-                            "every factual sentence with an allowed "
-                            "citation label. Do not explain the "
-                            "correction. If the evidence does not "
-                            "answer the question, return exactly: "
-                            f"{INSUFFICIENT_RESPONSE}"
-                        )
-                    ),
-                ]
+            self._add_retry(
+                messages, answer, validation_error, allowed_labels
             )
 
         return {
@@ -322,3 +346,70 @@ class ComplianceGenerator:
             "generation_attempts": self.max_attempts,
             "validation_error": last_error,
         }
+
+    def generate_stream(
+        self,
+        query: str,
+        documents: list[dict[str, Any]],
+    ) -> Iterator[dict[str, Any]]:
+        """Stream *unverified* draft tokens, then a validated result.
+
+        The client must replace the draft with the complete result. A
+        retry may invalidate everything shown in the earlier draft.
+        """
+        query = query.strip()
+        if not query:
+            raise ValueError("Question cannot be empty.")
+        if not documents:
+            yield {"type": "complete", "result": self._no_evidence_result()}
+            return
+
+        messages, sources, allowed_labels = self._build_messages(
+            query, documents
+        )
+
+        for attempt in range(1, self.max_attempts + 1):
+            parts: list[str] = []
+            for chunk in self.llm.stream(messages):
+                if not isinstance(chunk.content, str):
+                    raise TypeError(
+                        "The language model returned unsupported content."
+                    )
+                if chunk.content:
+                    parts.append(chunk.content)
+                    yield {"type": "draft", "text": chunk.content}
+
+            yield {"type": "stage", "stage": "validating"}
+            answer = "".join(parts).strip() or INSUFFICIENT_RESPONSE
+            answer = self.repair_single_source_citations(answer, sources)
+            citation_valid, validation_error = self.validate_citations(
+                answer, sources
+            )
+            if citation_valid:
+                yield {
+                    "type": "complete",
+                    "result": {
+                        "answer": answer,
+                        "sources": sources,
+                        "citation_valid": True,
+                        "generation_attempts": attempt,
+                    },
+                }
+                return
+
+            if attempt < self.max_attempts:
+                self._add_retry(
+                    messages, answer, validation_error, allowed_labels
+                )
+                yield {"type": "retry", "attempt": attempt + 1}
+                continue
+
+            yield {
+                "type": "complete",
+                "result": {
+                    "answer": INSUFFICIENT_RESPONSE,
+                    "sources": sources,
+                    "citation_valid": False,
+                    "generation_attempts": attempt,
+                },
+            }
