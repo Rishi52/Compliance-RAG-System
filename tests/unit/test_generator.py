@@ -31,6 +31,14 @@ class FakeLLM:
 
         return FakeResponse(self.responses.pop(0))
 
+    def stream(self, messages: list[Any]):
+        self.calls.append(list(messages))
+        if not self.responses:
+            raise AssertionError("Fake LLM has no remaining responses.")
+        response = self.responses.pop(0)
+        for part in response if isinstance(response, list) else [response]:
+            yield FakeResponse(part)
+
 
 def make_document(
     chunk_id: str = "doc:1.1:000",
@@ -439,3 +447,78 @@ def test_repair_replaces_safeguard_style_citation() -> None:
     assert answer == (
         "Retain data according to policy [S1]."
     )
+
+
+def test_stream_sends_draft_before_validated_result() -> None:
+    generator, fake_llm = build_generator(
+        [["Maintain the ", "inventory [S1]."]]
+    )
+
+    events = list(generator.generate_stream(
+        query="What should be maintained?",
+        documents=[make_document()],
+    ))
+
+    assert [event["type"] for event in events] == [
+        "draft", "draft", "stage", "complete"
+    ]
+    assert events[0]["text"] == "Maintain the "
+    assert events[2]["stage"] == "validating"
+    assert events[-1]["result"]["answer"] == "Maintain the inventory [S1]."
+    assert events[-1]["result"]["citation_valid"] is True
+    assert len(fake_llm.calls) == 1
+
+
+def test_stream_retries_unverified_draft_and_accepts_corrected_answer() -> None:
+    generator, fake_llm = build_generator([
+        ["Unsupported answer."],
+        ["Maintain the inventory ", "[S1]."],
+    ])
+    documents = [make_document(), make_document(
+        chunk_id="doc:2.1:000",
+        safeguard_id="2.1",
+    )]
+
+    events = list(generator.generate_stream(
+        query="What should be maintained?",
+        documents=documents,
+    ))
+
+    assert any(event["type"] == "retry" for event in events)
+    assert events[-1]["result"]["answer"] == "Maintain the inventory [S1]."
+    assert events[-1]["result"]["generation_attempts"] == 2
+    assert len(fake_llm.calls) == 2
+    assert "failed citation validation" in fake_llm.calls[1][-1].content
+
+
+def test_stream_exhaustion_returns_abstention_not_unverified_draft() -> None:
+    generator, _ = build_generator([
+        "First unsupported answer.",
+        "Second unsupported answer.",
+    ])
+    documents = [make_document(), make_document(
+        chunk_id="doc:2.1:000",
+        safeguard_id="2.1",
+    )]
+
+    events = list(generator.generate_stream(
+        query="What should be maintained?",
+        documents=documents,
+    ))
+
+    assert events[-1]["result"]["answer"] == INSUFFICIENT_RESPONSE
+    assert events[-1]["result"]["citation_valid"] is False
+    assert events[-1]["result"]["generation_attempts"] == 2
+
+
+def test_stream_abstains_without_documents_or_llm_call() -> None:
+    generator, fake_llm = build_generator([])
+    events = list(generator.generate_stream("What is required?", []))
+
+    assert events == [{"type": "complete", "result": {
+        "answer": INSUFFICIENT_RESPONSE,
+        "sources": [],
+        "citation_valid": True,
+        "generation_attempts": 0,
+    }}]
+    assert fake_llm.calls == []

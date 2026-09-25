@@ -1,5 +1,6 @@
+import json
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from contextlib import asynccontextmanager
 from typing import Any
 from time import perf_counter
@@ -7,6 +8,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -370,6 +372,122 @@ def chat(
         sources=sources,
         citation_valid=result["citation_valid"],
         generation_attempts=result["generation_attempts"],
+    )
+
+
+def encode_event(event: dict[str, Any]) -> str:
+    """Serialize one event per line so partial network reads are safe."""
+    return json.dumps(event, ensure_ascii=False) + "\n"
+
+
+@router.post("/chat/stream")
+def chat_stream(
+    payload: QuestionRequest,
+    request: Request,
+) -> StreamingResponse:
+    """Send real pipeline stages, draft tokens and a final checked answer.
+
+    Draft events are unverified previews. Only the complete event may
+    be presented as the authoritative answer or copied by the client.
+    """
+    retriever, context_selector, generator = get_services(request)
+
+    def events() -> Iterator[str]:
+        started_at = perf_counter()
+        result: ChatResponse | None = None
+        timings: dict[str, float | None] = {
+            "retrieval_ms": 0.0,
+            "selection_ms": 0.0,
+            "generation_ms": 0.0,
+            "first_draft_ms": None,
+        }
+        try:
+            if not is_compliance_question(payload.question):
+                logger.info("Out-of-scope stream question safely abstained.")
+                result = ChatResponse(
+                    answer=OUT_OF_SCOPE_RESPONSE,
+                    sources=[],
+                    citation_valid=True,
+                    generation_attempts=0,
+                )
+            else:
+                yield encode_event({"type": "stage", "stage": "retrieving"})
+                stage_started = perf_counter()
+                ranked_documents = retriever.search(
+                    query=payload.question,
+                    k=settings.final_top_k,
+                )
+                timings["retrieval_ms"] = round(
+                    (perf_counter() - stage_started) * 1000, 2
+                )
+
+                yield encode_event({"type": "stage", "stage": "selecting"})
+                stage_started = perf_counter()
+                selected_documents = context_selector.select(
+                    ranked_documents
+                )
+                timings["selection_ms"] = round(
+                    (perf_counter() - stage_started) * 1000, 2
+                )
+
+                yield encode_event({"type": "stage", "stage": "generating"})
+                stage_started = perf_counter()
+                for event in generator.generate_stream(
+                    query=payload.question,
+                    documents=selected_documents,
+                ):
+                    if event["type"] == "draft" and timings["first_draft_ms"] is None:
+                        timings["first_draft_ms"] = round(
+                            (perf_counter() - started_at) * 1000, 2
+                        )
+                    if event["type"] == "complete":
+                        result = ChatResponse(**event["result"])
+                    else:
+                        yield encode_event(event)
+                if result is None:
+                    raise RuntimeError("Generation ended without a result.")
+                timings["generation_ms"] = round(
+                    (perf_counter() - stage_started) * 1000, 2
+                )
+
+            timings["total_ms"] = round(
+                (perf_counter() - started_at) * 1000, 2
+            )
+            logger.info(
+                "Streamed compliance answer completed.",
+                extra={
+                    "request_id": request.state.request_id,
+                    "duration_ms": timings["total_ms"],
+                },
+            )
+            yield encode_event({
+                "type": "complete",
+                "result": result.model_dump(),
+                "timings": timings,
+            })
+        except ValueError:
+            logger.warning(
+                "Streamed compliance question was rejected.",
+                exc_info=True,
+            )
+            yield encode_event({
+                "type": "error",
+                "message": "Invalid compliance question.",
+            })
+        except Exception:
+            logger.exception("Streamed compliance question failed.")
+            yield encode_event({
+                "type": "error",
+                "message": "Unable to process the compliance question.",
+            })
+
+    return StreamingResponse(
+        events(),
+        media_type="application/x-ndjson",
+        headers={
+            "Cache-Control": "no-cache, no-transform",
+            "X-Accel-Buffering": "no",
+        },
     )
 
 
